@@ -78,7 +78,7 @@ def search():
     results = search_users(query)
     results = [user for user in results if user.id != current_user.id]
 
-    return render_template('social/search.html', results=results, query=query)
+    return render_template('social/search.html', results=results, query=query)  
 
 
 
@@ -159,10 +159,10 @@ def view_conversation(conversation_id):
     other_user = User.query.get(other_id)
 
     return render_template('social/conversation.html',
-                           conversation_id=conversation_id,
-                           messages=messages,
-                           other_user=other_user,
-                           form=form)
+                            conversation_id=conversation_id,
+                            messages=messages,
+                            other_user=other_user,
+                            form=form)
 
 
 
@@ -324,29 +324,36 @@ def comment_post(post_id):
 def like_post_route(post_id):
     post = get_post(post_id, current_user.id)
     if not post:
+        if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'error': 'Post not found or unauthorized.'}), 404
         flash('Post not found or unauthorized.', 'danger')
         return redirect(url_for('social.feed'))
 
-    if like_post(post_id, current_user.id):  # helper function
+    if like_post(post_id, current_user.id):
+        if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Post liked.'})
         flash('Post liked.', 'success')
     else:
+        if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': 'You already liked this post.'})
         flash('You already liked this post.', 'warning')
-    
-    # Redirect to feed with anchor to the specific post
-    return redirect(url_for('social.feed', _anchor=f'post-{post_id}'))
 
+    return redirect(url_for('social.feed', _anchor=f'post-{post_id}'))
 
 
 @social_bp.route('/post/<int:post_id>/unlike', methods=['POST'])
 @login_required
 def unlike_post_route(post_id):
     if unlike_post(post_id, current_user.id):
+        if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Post unliked.'})
         flash('Unliked the post!', 'success')
     else:
+        if request.is_json or request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'message': 'You have not liked this post yet.'})
         flash('You have not liked this post yet.', 'warning')
-    
-    # Redirect to feed with anchor to the specific post
-    return redirect(url_for('social.feed', _anchor=f'post-{post_id}'))
+
+    return redirect(url_for('social.feed', _anchor=f'post-{post_id}'))  
 
 
 

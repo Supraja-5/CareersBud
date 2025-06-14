@@ -3,6 +3,7 @@
 # Import the necessary models and functions
 from functools import wraps
 from types import SimpleNamespace
+from zoneinfo import ZoneInfo
 
 #########################################
 #########################################
@@ -13,76 +14,66 @@ from types import SimpleNamespace
 ########################################
 from app.models import (
     Course, CourseCategory, User, CourseEnrollment,
-    CourseReview, CourseCertificate, CourseSection, CourseLesson,
+    CourseReview, CourseCertificate, CourseSection, CourseLesson, Employee,
     approve_course, reject_course, get_pending_courses, 
 )
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, current_app
+from flask import Blueprint, render_template, redirect, session, url_for, flash, request, jsonify, current_app
 from flask_login import login_required, current_user, login_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField, SelectField, FloatField
 from wtforms.validators import DataRequired, Length, Optional, NumberRange
 from sqlalchemy import func, desc, asc
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import os
 from werkzeug.utils import secure_filename
+from datetime import datetime, timedelta
 
-from app.extensions import db
+from app.extensions import db, bcrypt
 # If creating a separate blueprint, uncomment these lines
 # admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 # Helper function to check if user is admin
 from app.forms import AdminLoginForm
+from app.routes.coursebud_bp import CourseForm, CourseLessonForm, CourseSectionForm
 
 # Create a dedicated blueprint for admin functionality
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 # Helper function to check if user is admin
 def is_admin():
-    return current_user.is_authenticated and current_user.is_admin
-
-
-# @admin_bp.route('/login', methods=['GET', 'POST'])
-# def admin_login():
-#     if current_user.is_authenticated:
-#         if current_user.is_admin:
-#             return redirect(url_for('admin.admin_dashboard'))
-#         else:
-#             flash('You are already logged in as a non-admin user.', 'info')
-#             return redirect(url_for('coursebud.index'))
-
-#     form = AdminLoginForm()
-#     if form.validate_on_submit():
-#         user = User.query.filter_by(email=form.email.data).first()
-#         if user and user.is_admin and user.check_password(form.password.data) and user.code == form.code.data:
-#             login_user(user)
-#             flash('Welcome, Admin!', 'success')
-#             return redirect(url_for('admin.admin_dashboard'))
-#         else:
-#             flash('Invalid credentials or code.', 'danger')
-
-#     return render_template('coursebud/admin/admin_login.html', form=form, title='Admin Login')
+    return session.get('admin_logged_in')
 
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def admin_login():
-    # TEMPORARY: Create a fake admin user in memory
-    fake_admin = SimpleNamespace(
-        id=999,
-        email='admin@gmail.com',
-        is_authenticated=True,
-        is_admin=True,
-        is_active=True,
-        is_anonymous=False,
-        get_id=lambda: '999',
-        check_password=lambda password: password == '123456789',
-        code='1234'
-    )
+    # Check if admin is already in session
+    if session.get('admin_logged_in'):
+        return redirect(url_for('admin.admin_dashboard'))
 
-    login_user(fake_admin, remember=True)
+    form = AdminLoginForm()
+    if form.validate_on_submit():
+        user = Employee.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.passcode == form.code.data:
+            # Manually store user info in session
+            session['admin_logged_in'] = True
+            session['admin_email'] = user.email
+            session['admin_id'] = user.bud_id
+            flash('Welcome, Admin!', 'success')
+            return redirect(url_for('admin.admin_dashboard'))
+        else:
+            flash('Invalid credentials or code.', 'danger')
 
-    flash('Temporarily logged in as fake admin.', 'warning')
-    return redirect(url_for('admin.admin_dashboard'))
+    return render_template('coursebud/admin/admin_login.html', form=form, title='Admin Login')
+
+
+@admin_bp.route('/logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    session.pop('admin_email', None)
+    session.pop('admin_id', None)
+    flash('Logged out successfully.', 'info')
+    return redirect(url_for('index'))
 
 
 # Admin required decorator
@@ -150,23 +141,85 @@ def reject_course(course_id, notes=None):
         print(f"Error rejecting course: {e}")
         return False
 
-# Admin pending courses list route
-@admin_bp.route('/courses/pending')
-@login_required
+@admin_bp.route('/save_notes_only', methods=['POST'])
 @admin_required
-def pending_courses():
-    """Admin view of courses pending approval"""
-    pending_courses = get_pending_courses()
+def save_notes_only():
+    course_id = request.form.get('course_id')
+    notes = request.form.get('reviewer_notes', '').strip()
+
+    if not course_id:
+        return jsonify({'status': 'error', 'message': 'Course ID missing.'}), 400
+
+    try:
+        course = Course.query.get(course_id)
+        if not course:
+            return jsonify({'status': 'error', 'message': 'Course not found.'}), 404
+
+        course.approval_notes = notes
+        db.session.commit()
+        return jsonify({'status': 'success', 'message': 'Notes saved!'})
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving notes: {e}")
+        return jsonify({'status': 'error', 'message': 'Error saving notes.'}), 500
+
+@admin_bp.route('/saves_notes', methods=['POST'])
+@admin_required
+def save_notes():
+    try:
+        course_id = request.form.get('course_id')
+        notes = request.form.get('reviewer_notes', '').strip()
+        action = request.form.get('action')
+        
+        if not course_id:
+            flash('Course ID missing.', 'danger')
+            return redirect(url_for('admin.admin_courses'))
+        course = Course.query.get(course_id)
+        if not course:
+            flash('Course not found.', 'danger')
+            return redirect(url_for('admin.admin_courses'))
+        
+        course.approval_notes = notes
+        if action == 'save':
+            flash('Notes saved successfully!', 'success')
+            return redirect(url_for('admin.review_course', course_id=course_id))
+        elif action == 'approve':
+            course.status = 'approved'
+            # course.approved_by = current_user.id
+            # course.approved_at = db.func.now()
+            flash('Course approved.', 'success')
+        elif action == 'reject':
+            course.status = 'rejected'
+            # course.rejected_by = current_user.id
+            # course.rejected_at = db.func.now()
+            flash('Course rejected.', 'warning')
+        else:
+            flash('Unknown action.', 'danger')
+
+        # TODO: Send notification to course creator about rejection
+
+        db.session.commit()
+        return redirect(url_for('admin.admin_courses'))
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error rejecting course: {e}")
+        return redirect(url_for('admin.admin_courses'))
+
+# Admin pending courses list route
+# @admin_bp.route('/courses/pending')
+# @admin_required
+# def pending_courses():
+#     """Admin view of courses pending approval"""
+#     pending_courses = get_pending_courses()
     
-    return render_template(
-        'admin/pending_courses.html',
-        title='Pending Courses',
-        pending_courses=pending_courses
-    )
+#     return render_template(
+#         'admin/pending_courses.html',
+#         title='Pending Courses',
+#         pending_courses=pending_courses
+#     )
 
 # Course review page route
 @admin_bp.route('/course/<int:course_id>/review', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def review_course(course_id):
     """Admin review of a course"""
@@ -175,7 +228,7 @@ def review_course(course_id):
     # Check if course is pending
     if course.status != 'pending':
         flash('This course is not pending review.', 'info')
-        return redirect(url_for('admin.pending_courses'))
+        return redirect(url_for('admin.admin_courses'))
     
     if request.method == 'POST':
         action = request.form.get('action')
@@ -192,106 +245,103 @@ def review_course(course_id):
             else:
                 flash('Failed to reject course.', 'danger')
         
-        return redirect(url_for('admin.pending_courses'))
+        return redirect(url_for('admin.admin_courses'))
     
     # Get creator info
     creator = User.query.get(course.creator_id)
     
     # Get sections and lessons for review
     sections = CourseSection.query.filter_by(course_id=course_id).order_by(CourseSection.order).all()
-    
+    section_form = CourseSectionForm()
+    lesson_form = CourseLessonForm()
     # Count total lessons
     lesson_count = 0
     for section in sections:
         lesson_count += len(section.lessons)
     
+
+    ####TEMP####
+    form = CourseForm(obj=course)
     return render_template(
-        'admin/review_course.html',
+        'coursebud/admin/course_review_page.html',
         title='Review Course',
         course=course,
         creator=creator,
         sections=sections,
+        form=form,
+        section_form=section_form,
+        lesson_form=lesson_form,
         lesson_count=lesson_count
     )
 
-def is_admin():
-    return current_user.is_authenticated and current_user.is_admin
-
-# Admin required decorator
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not is_admin():
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('coursebud.index'))
-        return f(*args, **kwargs)
-    return decorated_function
-
 # Admin dashboard
-# @coursebud_bp.route('/admin')
-# @login_required
-# @admin_required
-# def admin_dashboard():
-#     """Admin dashboard with key metrics"""
+@admin_bp.route('/dashboard')
+@admin_required
+def admin_dashboard():
+    """Admin dashboard with key metrics"""
+    if not session.get('admin_logged_in'):
+        flash('Please log in as admin to access the dashboard.', 'warning')
+        return redirect(url_for('admin.admin_login'))
     
-#     # Get basic counts
-#     total_users = User.query.count()
-#     total_courses = Course.query.count()
-#     total_enrollments = CourseEnrollment.query.count()
-#     pending_courses = Course.query.filter_by(status='pending').count()
+    # Get basic counts
+    total_users = User.query.count()
+    total_courses = Course.query.count()
+    total_enrollments = CourseEnrollment.query.count()
+    pending_courses = Course.query.filter_by(status='pending').count()
+    user = Employee.query.filter_by(email=session['admin_email']).first()
+
     
-#     # Get courses created in the last 30 days
-#     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-#     new_courses = Course.query.filter(Course.created_at >= thirty_days_ago).count()
+    now_utc = datetime.now(timezone.utc)
+    now_local = now_utc.astimezone() 
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    new_courses = Course.query.filter(Course.created_at >= thirty_days_ago).count()
+    new_users = User.query.filter(User.created_at >= thirty_days_ago).count()
+    new_enrollments = CourseEnrollment.query.filter(CourseEnrollment.enrolled_at >= thirty_days_ago).count()
+
+    top_courses = Course.query.join(CourseEnrollment).group_by(Course.id).order_by(
+        func.count(CourseEnrollment.id).desc()
+    ).limit(5).all()
     
-#     # Get users registered in the last 30 days
-#     new_users = User.query.filter(User.created_at >= thirty_days_ago).count()
+    # Get top courses by revenue
+    # top_revenue_courses = Course.query.join(CourseEnrollment).join(Payment).filter(
+    #     Payment.status == 'succeeded',
+    #     Payment.payment_type == 'course_purchase'
+    # ).group_by(Course.id).order_by(
+    #     func.sum(Payment.amount).desc()
+    # ).limit(5).all()
     
-#     # Get enrollments in the last 30 days
-#     new_enrollments = CourseEnrollment.query.filter(CourseEnrollment.enrolled_at >= thirty_days_ago).count()
-    
-#     # Get revenue statistics
-#     revenue_stats = get_revenue_statistics()
-    
-#     # Get top courses by enrollment
-#     top_courses = Course.query.join(CourseEnrollment).group_by(Course.id).order_by(
-#         func.count(CourseEnrollment.id).desc()
-#     ).limit(5).all()
-    
-#     # Get top courses by revenue
-#     top_revenue_courses = Course.query.join(CourseEnrollment).join(Payment).filter(
-#         Payment.status == 'succeeded',
-#         Payment.payment_type == 'course_purchase'
-#     ).group_by(Course.id).order_by(
-#         func.sum(Payment.amount).desc()
-#     ).limit(5).all()
-    
-#     # Get top instructors by students
-#     top_instructors = User.query.join(
-#         Course, Course.creator_id == User.id
-#     ).join(
-#         CourseEnrollment, CourseEnrollment.course_id == Course.id
-#     ).group_by(User.id).order_by(
-#         func.count(CourseEnrollment.id).desc()
-#     ).limit(5).all()
-    
-#     return render_template(
-#         'coursebud/admin/dashboard.html',
-#         title='Admin Dashboard',
-#         total_users=total_users,
-#         total_courses=total_courses,
-#         total_enrollments=total_enrollments,
-#         pending_courses=pending_courses,
-#         new_courses=new_courses,
-#         new_users=new_users,
-#         new_enrollments=new_enrollments,
-#         revenue_stats=revenue_stats,
-#         top_courses=top_courses,
-#         top_revenue_courses=top_revenue_courses,
-#         top_instructors=top_instructors
-#     )
+    # Get top instructors by students
+    top_instructors = User.query.join(
+        Course, Course.creator_id == User.id
+    ).join(
+        CourseEnrollment, CourseEnrollment.course_id == Course.id
+    ).group_by(User.id).order_by(
+        func.count(CourseEnrollment.id).desc()
+    ).limit(5).all()
+
+    return render_template(
+        'coursebud/admin/admin_dashboard.html',
+        title='Admin Dashboard',
+        user=user,
+        total_users=total_users,
+        total_courses=total_courses,
+        total_enrollments=total_enrollments,
+        pending_courses=pending_courses,
+        new_courses=new_courses,
+        new_users=new_users,
+        new_enrollments=new_enrollments,
+        top_courses=top_courses,
+        now=now_local,
+        top_instructors=top_instructors
+    )
+
+
+@admin_bp.route('/revenue-report')
+def admin_revenue_report():
+    return "Admin Revenue Report placeholder"
 
 # Helper function to get revenue statistics
+#########################################
 # def get_revenue_statistics():
 #     """Get revenue statistics for admin dashboard"""
 #     # Get total revenue
@@ -338,7 +388,6 @@ def admin_required(f):
 
 # Course approvals page
 @admin_bp.route('/admin/courses/pending')
-@login_required
 @admin_required
 def admin_pending_courses():
     """Admin view of courses pending approval"""
@@ -350,120 +399,140 @@ def admin_pending_courses():
         pending_courses=pending_courses
     )
 
-# Course review page
-@admin_bp.route('/admin/course/<int:course_id>/review', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def admin_review_course(course_id):
-    """Admin review of a course"""
-    course = Course.query.get_or_404(course_id)
-    
-    # Check if course is pending
-    if course.status != 'pending':
-        flash('This course is not pending review.', 'info')
-        return redirect(url_for('coursebud.admin_pending_courses'))
-    
-    if request.method == 'POST':
-        action = request.form.get('action')
-        notes = request.form.get('notes', '')
-        
-        if action == 'approve':
-            if approve_course(course_id, notes):
-                flash('Course has been approved!', 'success')
-            else:
-                flash('Failed to approve course.', 'danger')
-        elif action == 'reject':
-            if reject_course(course_id, notes):
-                flash('Course has been rejected.', 'success')
-            else:
-                flash('Failed to reject course.', 'danger')
-        
-        return redirect(url_for('coursebud.admin_pending_courses'))
-    
-    # Get creator info
-    creator = User.query.get(course.creator_id)
-    
-    # Get sections and lessons for review
-    sections = CourseSection.query.filter_by(course_id=course_id).order_by(CourseSection.order).all()
-    
-    # Count total lessons
-    lesson_count = 0
-    for section in sections:
-        lesson_count += len(section.lessons)
-    
-    return render_template(
-        'coursebud/admin/review_course.html',
-        title='Review Course',
-        course=course,
-        creator=creator,
-        sections=sections,
-        lesson_count=lesson_count
-    )
-
 # Course management
-@admin_bp.route('/admin/courses')
-@login_required
+# @admin_bp.route('/courses')
+# @admin_required
+# def admin_courses():
+#     """Admin view of all courses"""
+#     # Get filter parameters
+#     status = request.args.get('status', 'all')
+#     category_id = request.args.get('category_id')
+#     search = request.args.get('search', '')
+#     sort = request.args.get('sort', 'newest')
+    
+#     # Base query
+#     query = Course.query
+    
+#     # Apply filters
+#     if status != 'all':
+#         query = query.filter(Course.status == status)
+        
+#     if category_id:
+#         query = query.filter(Course.category_id == category_id)
+        
+#     if search:
+#         query = query.filter(
+#             (Course.title.ilike(f'%{search}%')) | 
+#             (Course.description.ilike(f'%{search}%'))
+#         )
+    
+#     # Apply sorting
+#     if sort == 'newest':
+#         query = query.order_by(Course.created_at.desc())
+#     elif sort == 'oldest':
+#         query = query.order_by(Course.created_at.asc())
+#     elif sort == 'title_asc':
+#         query = query.order_by(Course.title.asc())
+#     elif sort == 'title_desc':
+#         query = query.order_by(Course.title.desc())
+#     elif sort == 'most_enrolled':
+#         query = query.outerjoin(CourseEnrollment).group_by(Course.id).order_by(
+#             func.count(CourseEnrollment.id).desc()
+#         )
+    
+#     # Paginate results
+#     page = request.args.get('page', 1, type=int)
+#     per_page = 20
+#     courses = query.paginate(page=page, per_page=per_page)
+    
+#     # Get categories for filter
+#     categories = CourseCategory.query.order_by(CourseCategory.name).all()
+    
+#     return render_template(
+#         'coursebud/admin/courses.html',
+#         title='Manage Courses',
+#         courses=courses,
+#         categories=categories,
+#         status=status,
+#         category_id=category_id,
+#         search=search,
+#         sort=sort
+#     )
+
+
+@admin_bp.route('/courses', methods=['GET'])
 @admin_required
 def admin_courses():
-    """Admin view of all courses"""
-    # Get filter parameters
-    status = request.args.get('status', 'all')
-    category_id = request.args.get('category_id')
-    search = request.args.get('search', '')
-    sort = request.args.get('sort', 'newest')
+    # Check if admin is logged in
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin.admin_login'))
     
-    # Base query
+    # Get all courses with pagination
+    page = request.args.get('page', 1, type=int)
+    per_page = 10  # Number of courses per page
+    
+    # Get filter parameters
+    status_filter = request.args.get('status', '')
+    category_filter = request.args.get('category', '')
+    search_query = request.args.get('search', '')
+    
+    # Build query
     query = Course.query
     
     # Apply filters
-    if status != 'all':
-        query = query.filter(Course.status == status)
-        
-    if category_id:
-        query = query.filter(Course.category_id == category_id)
-        
-    if search:
+    if status_filter:
+        query = query.filter(Course.status == status_filter)
+    
+    if category_filter:
+        query = query.filter(Course.category_id == category_filter)
+    
+    if search_query:
         query = query.filter(
-            (Course.title.ilike(f'%{search}%')) | 
-            (Course.description.ilike(f'%{search}%'))
+            db.or_(
+                Course.title.contains(search_query),
+                Course.description.contains(search_query)
+            )
         )
     
-    # Apply sorting
-    if sort == 'newest':
-        query = query.order_by(Course.created_at.desc())
-    elif sort == 'oldest':
-        query = query.order_by(Course.created_at.asc())
-    elif sort == 'title_asc':
-        query = query.order_by(Course.title.asc())
-    elif sort == 'title_desc':
-        query = query.order_by(Course.title.desc())
-    elif sort == 'most_enrolled':
-        query = query.outerjoin(CourseEnrollment).group_by(Course.id).order_by(
-            func.count(CourseEnrollment.id).desc()
-        )
+    # Order by creation date (newest first)
+    query = query.order_by(Course.created_at.desc())
     
     # Paginate results
-    page = request.args.get('page', 1, type=int)
-    per_page = 20
-    courses = query.paginate(page=page, per_page=per_page)
+    courses = query.paginate(
+        page=page, 
+        per_page=per_page, 
+        error_out=False
+    )
     
-    # Get categories for filter
-    categories = CourseCategory.query.order_by(CourseCategory.name).all()
+    # Get categories for filter dropdown
+    categories = CourseCategory.query.all()
     
+    # Get course statistics
+    total_courses = Course.query.count()
+    approved_courses = Course.query.filter_by(status='approved').count()
+    pending_courses = Course.query.filter_by(status='pending').count()
+    draft_courses = Course.query.filter_by(status='draft').count()
+    
+    stats = {
+        'total': total_courses,
+        'approved': approved_courses,
+        'pending': pending_courses,
+        'draft': draft_courses
+    }
+    flash("testing", "general") 
     return render_template(
-        'coursebud/admin/courses.html',
-        title='Manage Courses',
+        'coursebud/admin/admin_courses.html',
+        title='Courses Management',
         courses=courses,
         categories=categories,
-        status=status,
-        category_id=category_id,
-        search=search,
-        sort=sort
+        stats=stats,
+        status_filter=status_filter,
+        category_filter=category_filter,
+        search_query=search_query
     )
 
 # User management
 @admin_bp.route('/admin/users')
-@login_required
 @admin_required
 def admin_users():
     """Admin view of all users"""
@@ -521,7 +590,7 @@ def admin_users():
         query = query.outerjoin(CourseEnrollment, CourseEnrollment.user_id == User.id).group_by(User.id).order_by(
             func.count(CourseEnrollment.id).desc()
         )
-    
+    stats = User.query.count()
     # Paginate results
     page = request.args.get('page', 1, type=int)
     per_page = 20
@@ -532,10 +601,46 @@ def admin_users():
         title='Manage Users',
         users=users,
         role=role,
+        stats=stats,
         subscription=subscription,
         search=search,
         sort=sort
     )
+
+@admin_bp.route('/admin/users/<int:user_id>/view')
+@admin_required
+def view_user(user_id):
+    user = User.query.get_or_404(user_id)
+    return render_template('coursebud/admin/view_user.html', user=user)
+
+# Edit user
+@admin_bp.route('/admin/users/<int:user_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        user.first_name = request.form.get('first_name')
+        user.last_name = request.form.get('last_name')
+        user.email = request.form.get('email')
+        user.is_admin = bool(request.form.get('is_admin'))
+        user.subscription_tier = request.form.get('subscription_tier')
+
+        db.session.commit()
+        flash('User updated successfully.', 'success')
+        return redirect(url_for('admin.admin_users'))
+
+    return render_template('coursebud/admin/edit_user.html', user=user)
+
+# Delete user
+@admin_bp.route('/admin/users/<int:user_id>/delete')
+@admin_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully.', 'success')
+    return redirect(url_for('admin.admin_users'))
 
 # View user details
 # @coursebud_bp.route('/admin/user/<int:user_id>')
@@ -577,7 +682,6 @@ def admin_users():
 
 # Edit user
 @admin_bp.route('/admin/user/<int:user_id>/edit', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def admin_edit_user(user_id):
     """Admin edit of a user"""
@@ -631,7 +735,6 @@ def admin_edit_user(user_id):
 
 # Category management
 @admin_bp.route('/admin/categories', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def admin_categories():
     """Admin management of course categories"""
@@ -685,7 +788,6 @@ def admin_categories():
 
 # Delete category
 @admin_bp.route('/admin/category/<int:category_id>/delete', methods=['POST'])
-@login_required
 @admin_required
 def admin_delete_category(category_id):
     """Delete a category"""
@@ -819,7 +921,6 @@ def admin_delete_category(category_id):
 
 # Platform settings
 @admin_bp.route('/admin/settings', methods=['GET', 'POST'])
-@login_required
 @admin_required
 def admin_settings():
     """Admin platform settings"""
@@ -869,7 +970,6 @@ def admin_settings():
 
 # System logs
 @admin_bp.route('/admin/logs')
-@login_required
 @admin_required
 def admin_logs():
     """View system logs"""
@@ -890,3 +990,4 @@ def admin_logs():
         title='System Logs',
         logs=logs
     )
+

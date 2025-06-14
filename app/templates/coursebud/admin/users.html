@@ -1,0 +1,166 @@
+{% extends 'coursebud/admin/admin_base.html' %}
+{% block title %}Users Management{% endblock %}
+{% block content %}
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="card h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="p-3 rounded-circle bg-primary bg-opacity-10 text-primary me-3">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <p class="text-muted small mb-1">Total Users</p>
+                    <h4 class="mb-0">{{ stats }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end mb-4">
+          <div class="col-md-3">
+              <label class="form-label">Search</label>
+              <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Search by name or email">
+          </div>
+          <div class="col-md-2">
+              <label class="form-label">Role</label>
+              <select name="role" class="form-select">
+                  <option value="all" {{ 'selected' if role == 'all' }}>All</option>
+                  <option value="students" {{ 'selected' if role == 'students' }}>Students</option>
+                  <option value="instructors" {{ 'selected' if role == 'instructors' }}>Instructors</option>
+                  <option value="admins" {{ 'selected' if role == 'admins' }}>Admins</option>
+              </select>
+          </div>
+          <div class="col-md-2">
+              <label class="form-label">Subscription</label>
+              <select name="subscription" class="form-select">
+                  <option value="all" {{ 'selected' if subscription == 'all' }}>All</option>
+                  <option value="free" {{ 'selected' if subscription == 'free' }}>Free</option>
+                  <option value="premium" {{ 'selected' if subscription == 'premium' }}>Premium</option>
+              </select>
+          </div>
+          <div class="col-md-3">
+              <label class="form-label">Sort By</label>
+              <select name="sort" class="form-select">
+                  <option value="newest" {{ 'selected' if sort == 'newest' }}>Newest</option>
+                  <option value="oldest" {{ 'selected' if sort == 'oldest' }}>Oldest</option>
+                  <option value="name_asc" {{ 'selected' if sort == 'name_asc' }}>Name A-Z</option>
+                  <option value="name_desc" {{ 'selected' if sort == 'name_desc' }}>Name Z-A</option>
+                  <option value="most_courses" {{ 'selected' if sort == 'most_courses' }}>Most Courses</option>
+                  <option value="most_enrolled" {{ 'selected' if sort == 'most_enrolled' }}>Most Enrolled</option>
+              </select>
+          </div>
+          <div class="col-md-2">
+              <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-filter me-2"></i>Apply
+              </button>
+          </div>
+        </form>
+
+    </div>
+</div>
+
+<!-- User Table -->
+<div class="border rounded bg-white">
+    <div class="border-bottom p-3">
+        <h5 class="mb-0">Users List</h5>
+    </div>
+
+    {% if users.items %}
+      <div class="table-responsive bg-white border rounded">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Subscription</th>
+                    <th>Joined</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users.items %}
+                <tr>
+                    <td>
+                        <div class="fw-semibold">{{ user.first_name }} {{ user.last_name }}</div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if user.is_admin %}
+                            <span class="badge bg-danger">Admin</span>
+                        {% elif user.courses %}
+                            <span class="badge bg-info">Instructor</span>
+                        {% elif user.enrollments %}
+                            <span class="badge bg-secondary">Student</span>
+                        {% else %}
+                            <span class="badge bg-light text-dark">User</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {{ 'bg-info' if user.subscription_tier == 'premium' else 'bg-secondary' }}">
+                            {{ user.subscription_tier.title() }}
+                        </span>
+                    </td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('admin.view_user', user_id=user.id) }}" class="btn btn-sm btn-outline-primary" title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-outline-info" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if not users.items %}
+            <div class="p-4 text-center text-muted">No users found.</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+
+    <!-- Pagination -->
+    {% if users.pages > 1 %}
+      <div class="d-flex justify-content-between align-items-center mt-3">
+          <small class="text-muted">
+              Showing {{ users.page }} of {{ users.pages }} pages ({{ users.total }} users total)
+          </small>
+          <nav>
+              <ul class="pagination pagination-sm mb-0">
+                  {% if users.has_prev %}
+                  <li class="page-item">
+                      <a class="page-link" href="{{ url_for('admin.admin_users', page=users.prev_num, role=role, subscription=subscription, search=search, sort=sort) }}">Prev</a>
+                  </li>
+                  {% endif %}
+                  {% for p in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                      {% if p %}
+                          <li class="page-item {% if users.page == p %}active{% endif %}">
+                              <a class="page-link" href="{{ url_for('admin.admin_users', page=p, role=role, subscription=subscription, search=search, sort=sort) }}">{{ p }}</a>
+                          </li>
+                      {% else %}
+                          <li class="page-item disabled"><span class="page-link">…</span></li>
+                      {% endif %}
+                  {% endfor %}
+                  {% if users.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="{{ url_for('admin.admin_users', page=users.next_num, role=role, subscription=subscription, search=search, sort=sort) }}">Next</a>
+                  </li>
+                  {% endif %}
+              </ul>
+          </nav>
+      </div>
+    {% endif %}
+
+
+{% endblock %}

@@ -827,7 +827,7 @@
                 <form method="POST" action="{{ url_for('progress.update_academic') }}">
                     {{ academic_form.hidden_tag() }}
 
-                    <div class="mb-3">
+                    <div class="mb-3">  
                         <label for="gpa" class="form-label">GPA</label>
                         {{ academic_form.gpa(class="form-control", type="number", step="0.1", min="0", max="4.0") }}
                         <div class="form-text">Enter your current GPA on a 4.0 scale</div>

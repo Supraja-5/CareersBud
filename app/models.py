@@ -3187,6 +3187,7 @@ class Course(db.Model):
    id = db.Column(db.Integer, primary_key=True)
    title = db.Column(db.String(255), nullable=False)
    description = db.Column(db.Text)
+   learning_obj = db.Column(db.Text, nullable=True)
    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
    category_id = db.Column(db.Integer, db.ForeignKey('course_categories.id'))
    level = db.Column(db.String(50))  # beginner, intermediate, advanced
@@ -3477,6 +3478,7 @@ def create_course(user_id, course_data):
        course = Course(
            title=course_data.get('title'),
            description=course_data.get('description'),
+           learning_obj=course_data.get('learning_obj'),
            creator_id=user_id,
            category_id=course_data.get('category_id'),
            level=course_data.get('level'),
@@ -3496,26 +3498,27 @@ def create_course(user_id, course_data):
        return None
 
 def submit_course_for_review(course_id):
-   """Submit a course for admin review"""
-   course = Course.query.get(course_id)
-   if course and course.status == 'draft':
-       course.status = 'pending'
-       db.session.commit()
-       
-       # Notify admins (you might want to implement this differently)
-       # This is just a placeholder for the concept
-       admins = User.query.filter_by(is_admin=True).all()
-       for admin in admins:
-           notification = Notification(
-               user_id=admin.id,
-               message=f"New course '{course.title}' is pending review",
-               is_read=False
-           )
-           db.session.add(notification)
-       
-       db.session.commit()
-       return True
-   return False
+    """Submit a course for admin review"""
+    course = Course.query.get(course_id)
+    if course and course.status in ['draft', 'rejected']:
+        course.status = 'pending'
+        db.session.commit()
+        
+        # Notify admins (you might want to implement this differently)
+        # This is just a placeholder for the concept
+        #TODO add admin notifications
+        # admins = User.query.filter_by(is_admin=True).all()
+        # for admin in admins:
+        #     notification = Notification(
+        #         user_id=admin.id,
+        #         message=f"New course '{course.title}' is pending review",
+        #         is_read=False
+        #     )
+        #     db.session.add(notification)
+        
+        # db.session.commit()
+        return True
+    return False
 
 def enroll_in_course(user_id, course_id):
    """Enroll a user in a course"""

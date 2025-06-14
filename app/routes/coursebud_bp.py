@@ -20,6 +20,7 @@ from datetime import datetime
 import uuid
 import time
 from app.extensions import db
+from app.routes.social_bp import DummyForm
 
 coursebud_bp = Blueprint('coursebud', __name__, url_prefix='/coursebud')
 
@@ -27,6 +28,8 @@ coursebud_bp = Blueprint('coursebud', __name__, url_prefix='/coursebud')
 class CourseForm(FlaskForm):
     title = StringField('Course Title', validators=[DataRequired(), Length(min=5, max=255)])
     description = TextAreaField('Description', validators=[DataRequired()])
+    learning_obj = TextAreaField('Learning Objective', validators=[Optional()])
+    
     category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
     level = SelectField('Level', choices=[
         ('beginner', 'Beginner'), 
@@ -192,7 +195,7 @@ def view_course(course_id):
     
     # Only show approved courses to regular users
     if course.status != 'approved' and (not current_user.is_authenticated or 
-                                      (course.creator_id != current_user.id and not current_user.is_admin)):
+                                    (course.creator_id != current_user.id and not current_user.is_admin)):
         flash('This course is not available.', 'warning')
         return redirect(url_for('coursebud.index'))
     
@@ -218,7 +221,7 @@ def view_course(course_id):
     stats = get_course_statistics(course_id)
     
     # Review form for enrolled users
-    review_form = None
+    review_form = DummyForm()
     if is_enrolled:
         # Check if user already left a review
         user_review = CourseReview.query.filter_by(user_id=current_user.id, course_id=course_id).first()
@@ -568,6 +571,7 @@ def create_new_course():
         course_data = {
             'title': form.title.data,
             'description': form.description.data,
+            'learning_obj': form.learning_obj.data,
             'category_id': form.category_id.data,
             'level': form.level.data,
             'price': form.price.data if not form.is_free.data else 0,
@@ -622,6 +626,7 @@ def edit_course(course_id):
         # Update course details
         course.title = form.title.data
         course.description = form.description.data
+        course.learning_obj = form.learning_obj.data
         course.category_id = form.category_id.data
         course.level = form.level.data
         course.is_free = form.is_free.data

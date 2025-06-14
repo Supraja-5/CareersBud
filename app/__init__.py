@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_login import current_user
 from app.config import SQLALCHEMY_DATABASE_URI, SECRET_KEY, DEBUG
 from app.extensions import db, bcrypt, login_manager, socketio, csrf, migrate
@@ -131,6 +131,10 @@ def create_app(config_class=None):
     # Register Flask-SocketIO event handlers
     with app.app_context():
         from app.sockets import chat_events
+
+    @app.route('/')
+    def index():
+        return redirect(url_for('coursebud.index'))
 
     return app
 

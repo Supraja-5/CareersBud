@@ -359,14 +359,14 @@
                             <div class="row mb-3">
                                 <div class="col-md-4 text-muted">Account Status:</div>
                                 <div class="col-md-8">
-                                    <span class="badge bg-success">Active</span>
+                                    <span>Active</span>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-4 text-muted">Subscription:</div>
                                 <div class="col-md-8">
-                                    <span class="badge {% if current_user.is_premium %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                    <span class="{% if current_user.is_premium %}text-dark{% else %}bg-secondary{% endif %}">
                                         {{ 'Premium' if current_user.is_premium else 'Free Tier' }}
                                     </span>
                                     

@@ -12,6 +12,10 @@ html.theme-transition *:after {
     animation: none !important;
 }
 
+#flash-container {
+  z-index: 1055; /* make sure it’s above header z-index */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -1399,4 +1403,146 @@ body {
 #tee{
   width:80px;
   height:auto;
+}
+
+
+/* Additional CSS fixes for overflow issues - Add this to your existing CSS */
+
+/* Override Bootstrap grid conflicts and fix sidebar positioning */
+.sidebar {
+    width: 250px !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+/* Fix main content positioning */
+.main-content {
+    margin-left: 250px !important;
+    width: calc(100% - 250px) !important;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Global overflow prevention */
+html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+}
+
+/* App container structure */
+.app-container {
+    display: flex;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.content-wrapper {
+    padding: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Text overflow handling */
+.sidebar .nav-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 230px;
+}
+
+.brand-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+/* Prevent text from breaking out of containers */
+.main-content *,
+.card *,
+.content-wrapper * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+/* Fix header positioning */
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    margin-left: 0 !important;
+}
+
+/* Fix footer positioning */
+.footer {
+    width: calc(100% - 250px) !important;
+    margin-left: 250px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Mobile responsive fixes */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 250px !important;
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .footer {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    
+    .welcome-text {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .header-icons {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* Long text and URL handling */
+.text-break {
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Notification dropdown overflow fix */
+.dropdown-menu.notification-dropdown {
+    max-width: 300px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.dropdown-menu.notification-dropdown .dropdown-item {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }

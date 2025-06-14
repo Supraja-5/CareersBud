@@ -1,57 +1,769 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-
-
-<div class="auth-container">
-    <div class="card auth-card">
-        <div class="card-body">
-            <div class="auth-header">
-                <h1>CareersBud</h1>
-                <p>Log in to your account</p>
+<div class="login-container">
+    <div class="login-wrapper">
+        <!-- Background decorations -->
+        <div class="login-bg-decoration login-bg-decoration-1"></div>
+        <div class="login-bg-decoration login-bg-decoration-2"></div>
+        <div class="login-bg-decoration login-bg-decoration-3"></div>
+        
+        <div class="login-card">
+            <!-- Header Section -->
+            <div class="login-header">
+                <div class="login-logo">
+                    <div class="login-logo-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h1 class="login-brand">{{ brand_name | default('CareersBud') }}</h1>
+                </div>
+                <div class="login-welcome">
+                    <h2 class="login-title">{{ welcome_title | default('Welcome Back') }}</h2>
+                    <p class="login-subtitle">{{ welcome_subtitle | default('Log in to your account') }}</p>
+                </div>
             </div>
             
-            <form method="POST" action="{{ url_for('auth.login') }}">
-                {{ form.hidden_tag() }}
-                
-                <div class="mb-3">
-                    {{ form.email.label(class="form-label") }}
-                    {% if form.email.errors %}
-                        {{ form.email(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                {{ error }}
-                            {% endfor %}
+            <!-- Form Section -->
+            <div class="login-form-section">
+                <form class="login-form" id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- Email Field -->
+                    <div class="login-form-group">
+                        {{ form.email.label(class="login-form-label") }}
+                        <div class="login-input-wrapper">
+                            {% if form.email.errors %}
+                                {{ form.email(class="login-form-control is-invalid", placeholder=form.email.label.text) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.email(class="login-form-control", placeholder=form.email.label.text) }}
+                            {% endif %}
                         </div>
-                    {% else %}
-                        {{ form.email(class="form-control") }}
-                    {% endif %}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.password.label(class="form-label") }}
-                    {% if form.password.errors %}
-                        {{ form.password(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.password.errors %}
-                                {{ error }}
-                            {% endfor %}
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="login-form-group">
+                        {{ form.password.label(class="login-form-label") }}
+                        <div class="login-input-wrapper">
+                            {% if form.password.errors %}
+                                {{ form.password(class="login-form-control is-invalid", placeholder=form.password.label.text) }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="login-form-control", placeholder=form.password.label.text) }}
+                            {% endif %}
+                            <button type="button" class="login-password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
-                    {% else %}
-                        {{ form.password(class="form-control") }}
-                    {% endif %}
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="login-form-options">
+                        <label class="login-checkbox">
+                            <input type="checkbox" name="remember" class="login-checkbox-input">
+                            <span class="login-checkbox-checkmark"></span>
+                            <span class="login-checkbox-text">{{ remember_text | default('Remember me') }}</span>
+                        </label>
+                        <a href="{{ url_for('auth.change_password') | default('#') }}" class="login-forgot-link">
+                            {{ forgot_password_text | default('Forgot password?') }}
+                        </a>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="login-form-group">
+                        {{ form.submit(class="login-submit-btn", id="loginSubmitBtn") }}
+                        <div class="login-btn-loader">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Divider -->
+                <div class="login-divider">
+                    <span class="login-divider-text">{{ divider_text | default('or') }}</span>
                 </div>
                 
-                <div class="d-grid gap-2">
-                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                <!-- Social Login -->
+                <div class="login-social">
+                    <button type="button" class="login-social-btn login-social-google">
+                        <i class="fab fa-google"></i>
+                        <span>{{ google_login_text | default('Continue with Google') }}</span>
+                    </button>
+                    <button type="button" class="login-social-btn login-social-github">
+                        <i class="fab fa-github"></i>
+                        <span>{{ github_login_text | default('Continue with GitHub') }}</span>
+                    </button>
                 </div>
-            </form>
-            
-            <div class="text-center mt-3">
-                <p style="color:whitesmoke;">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-primary">Register</a></p>
+                
+                <!-- Register Link -->
+                <div class="login-register">
+                    <p class="login-register-text">
+                        {{ register_prompt | default('Don\'t have an account?') }} 
+                        <a href="{{ url_for('auth.register') }}" class="login-register-link">
+                            {{ register_link_text | default('Register') }}
+                        </a>
+                    </p>
+                </div>
             </div>
+        </div>
+        
+        <!-- Floating elements -->
+        <div class="login-floating-element login-floating-1">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="login-floating-element login-floating-2">
+            <i class="fas fa-rocket"></i>
+        </div>
+        <div class="login-floating-element login-floating-3">
+            <i class="fas fa-target"></i>
         </div>
     </div>
 </div>
+
+<!-- Theme Toggle Button -->
+<div class="theme-toggle">
+    <button id="themeToggle" class="theme-toggle-btn" aria-label="{{ theme_toggle_label | default('Toggle theme') }}">
+        <i class="fas fa-sun theme-icon light-icon"></i>
+        <i class="fas fa-moon theme-icon dark-icon"></i>
+    </button>
+</div>
+
+<style>
+/* CSS Variables */
+:root[data-theme="light"] {
+    --primary-gradient: linear-gradient(145deg, #53a1f9, #9ca3a9);
+    --secondary-gradient: linear-gradient(145deg, #2da44e, #46954a);
+    --bg-gradient: linear-gradient(135deg, #ffffff, #f6f8fa);
+    --card-gradient: linear-gradient(145deg, #f6f8fa, #eaeef2);
+    --hover-overlay: rgba(0, 0, 0, 0.05);
+    --login-primary: #0969da;
+    --login-primary-dark: #0550ae;
+    --login-primary-light: #53a1f9;
+    --login-secondary: #2da44e;
+    --login-success: #2da44e;
+    --login-warning: #bf8700;
+    --login-danger: #cf222e;
+    --login-white: #ffffff;
+    --login-gray-50: #f6f8fa;
+    --login-gray-100: #eaeef2;
+    --login-gray-200: #d0d7de;
+    --login-gray-300: #afb8c1;
+    --login-gray-400: #8c959f;
+    --login-gray-500: #6e7781;
+    --login-gray-600: #57606a;
+    --login-gray-700: #424a53;
+    --login-gray-800: #32383f;
+    --login-gray-900: #24292f;
+    --login-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --login-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --login-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --login-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --login-radius: 12px;
+    --login-radius-lg: 16px;
+    --login-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --login-animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:root[data-theme="dark"] {
+    --primary-gradient: linear-gradient(145deg, #71b2fd, #aab1b8);
+    --secondary-gradient: linear-gradient(145deg, #3fb950, #56d364);
+    --bg-gradient: linear-gradient(135deg, #0d1117, #161b22);
+    --card-gradient: linear-gradient(145deg, #21262d, #30363d);
+    --hover-overlay: rgba(177, 186, 196, 0.12);
+    --login-primary: #2188ff;
+    --login-primary-dark: #1f6feb;
+    --login-primary-light: #71b2fd;
+    --login-secondary: #3fb950;
+    --login-success: #3fb950;
+    --login-warning: #d29922;
+    --login-danger: #f85149;
+    --login-white: #0d1117;
+    --login-gray-50: #161b22;
+    --login-gray-100: #21262d;
+    --login-gray-200: #30363d;
+    --login-gray-300: #484f58;
+    --login-gray-400: #656d76;
+    --login-gray-500: #8b949e;
+    --login-gray-600: #b1bac4;
+    --login-gray-700: #c9d1d9;
+    --login-gray-800: #f0f6fc;
+    --login-gray-900: #ffffff;
+    --login-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    --login-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.16);
+    --login-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    --login-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --login-radius: 12px;
+    --login-radius-lg: 16px;
+    --login-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --login-animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:root {
+    --primary-gradient: linear-gradient(145deg, #71b2fd, #aab1b8);
+    --secondary-gradient: linear-gradient(145deg, #3fb950, #56d364);
+    --bg-gradient: linear-gradient(135deg, #0d1117, #161b22);
+    --card-gradient: linear-gradient(145deg, #21262d, #30363d);
+    --hover-overlay: rgba(177, 186, 196, 0.12);
+    --login-primary: #2188ff;
+    --login-primary-dark: #1f6feb;
+    --login-primary-light: #71b2fd;
+    --login-secondary: #3fb950;
+    --login-success: #3fb950;
+    --login-warning: #d29922;
+    --login-danger: #f85149;
+    --login-white: #0d1117;
+    --login-gray-50: #161b22;
+    --login-gray-100: #21262d;
+    --login-gray-200: #30363d;
+    --login-gray-300: #484f58;
+    --login-gray-400: #656d76;
+    --login-gray-500: #8b949e;
+    --login-gray-600: #b1bac4;
+    --login-gray-700: #c9d1d9;
+    --login-gray-800: #f0f6fc;
+    --login-gray-900: #ffffff;
+    --login-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+    --login-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.16);
+    --login-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    --login-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    --login-radius: 12px;
+    --login-radius-lg: 16px;
+    --login-transition: all 0.3s cubic-bezier(0, 0, 0.2, 1);
+    --login-animation-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--login-gray-900);
+    background: var(--bg-gradient);
+    overflow-x: hidden;
+    display: flex; /* Ensure body is flex to support centering */
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0; /* Override any base.html margins */
+}
+
+/* Centering and layout */
+.login-container {
+    min-height: 100vh;
+    height: 100vh;
+    width: 100vw; /* Full viewport width to override base.html constraints */
+    display: flex !important; /* High specificity to override base.html */
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--bg-gradient);
+    position: fixed; /* Ensure it takes full viewport */
+    top: 0;
+    left: 0;
+    padding: 1rem;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.login-bg-decoration {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    animation: float 6s ease-in-out infinite;
+}
+
+.login-bg-decoration-1 { width: 300px; height: 300px; top: -150px; right: -150px; animation-delay: -2s; }
+.login-bg-decoration-2 { width: 200px; height: 200px; bottom: -100px; left: -100px; animation-delay: -4s; }
+.login-bg-decoration-3 { width: 150px; height: 150px; top: 20%; left: -75px; animation-delay: -1s; }
+
+.login-floating-element {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    backdrop-filter: blur(10px);
+    animation: float 8s ease-in-out infinite;
+}
+
+.login-floating-1 { top: 15%; right: 10%; animation-delay: -1s; }
+.login-floating-2 { bottom: 20%; right: 15%; animation-delay: -3s; }
+.login-floating-3 { top: 60%; left: 5%; animation-delay: -5s; }
+
+.login-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 480px; /* Increased width from 420px */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.login-card {
+    background: var(--card-gradient);
+    border-radius: var(--login-radius-lg);
+    box-shadow: var(--login-shadow-xl);
+    overflow: hidden;
+    border: 1px solid var(--login-gray-200);
+    backdrop-filter: blur(20px);
+    animation: slideInUp 0.8s var(--login-animation-bounce);
+    width: 100%;
+}
+
+.login-header {
+    padding: 2rem 1.5rem 1rem; /* Reduced padding to decrease height */
+    text-align: center;
+    background: var(--hover-overlay);
+    border-bottom: 1px solid var(--login-gray-200);
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem; /* Reduced margin */
+}
+
+.login-logo-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-gradient);
+    border-radius: var(--login-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    box-shadow: var(--login-shadow);
+}
+
+.login-brand {
+    font-size: 1.75rem; /* Slightly smaller to reduce height */
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.login-welcome { animation: fadeInUp 1s ease-out 0.3s both; }
+.login-title { font-size: 1.5rem; /* Reduced font size */ font-weight: 700; color: var(--login-gray-900); margin: 0 0 0.25rem 0; }
+.login-subtitle { color: var(--login-gray-600); font-size: 0.875rem; /* Smaller subtitle */ margin: 0; line-height: 1.5; }
+
+.login-form-section { padding: 1.5rem; /* Reduced padding to decrease height */ }
+.login-form { animation: fadeInUp 1s ease-out 0.5s both; }
+.login-form-group { margin-bottom: 1rem; /* Reduced margin */ }
+
+.login-form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.75rem; /* Smaller label */
+    color: var(--login-gray-700);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-form-icon { color: var(--login-primary); font-size: 0.75rem; }
+
+.login-input-wrapper { position: relative; }
+
+.login-form-control {
+    width: 100%;
+    padding: 0.875rem 1.25rem; /* Slightly smaller padding */
+    font-size: 0.875rem; /* Smaller input text */
+    border: 2px solid var(--login-gray-200);
+    border-radius: var(--login-radius);
+    background: var(--login-gray-50);
+    color: var(--login-gray-900);
+    transition: var(--login-transition);
+    font-family: inherit;
+}
+
+.login-form-control:focus {
+    outline: none;
+    border-color: var(--login-primary);
+    background: var(--login-white);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.login-form-control::placeholder { color: var(--login-gray-400); }
+.login-form-control.is-invalid { border-color: var(--login-danger); }
+.invalid-feedback { color: var(--login-danger); font-size: 0.75rem; margin-top: 0.25rem; }
+
+.login-password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--login-gray-400);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: var(--login-transition);
+}
+
+.login-password-toggle:hover { color: var(--login-primary); background: rgba(59, 130, 246, 0.1); }
+
+.login-form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem; /* Reduced margin */
+}
+
+.login-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.75rem; /* Smaller text */
+    color: var(--login-gray-600);
+}
+
+.login-checkbox-input { display: none; }
+
+.login-checkbox-checkmark {
+    width: 16px; /* Smaller checkbox */
+    height: 16px;
+    border: 2px solid var(--login-gray-300);
+    border-radius: 4px;
+    position: relative;
+    transition: var(--login-transition);
+    background: var(--login-white);
+}
+
+.login-checkbox-input:checked + .login-checkbox-checkmark {
+    background: var(--login-primary);
+    border-color: var(--login-primary);
+}
+
+.login-checkbox-input:checked + .login-checkbox-checkmark::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.625rem;
+}
+
+.login-forgot-link {
+    color: var(--login-primary);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: var(--login-transition);
+}
+
+.login-forgot-link:hover { color: var(--login-primary-dark); text-decoration: underline; }
+
+.login-submit-btn {
+    width: 100%;
+    padding: 0.875rem 2rem; /* Smaller padding */
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: var(--login-radius);
+    color: white;
+    font-size: 0.875rem; /* Smaller text */
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--login-transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: var(--login-shadow);
+}
+
+.login-submit-btn:hover { transform: translateY(-2px); box-shadow: var(--login-shadow-lg); }
+.login-submit-btn:active { transform: translateY(0); }
+.login-submit-btn.loading .btn-text { opacity: 0; }
+.login-submit-btn.loading .login-btn-loader { opacity: 1; }
+
+.login-btn-loader {
+    position: absolute;
+    opacity: 0;
+    transition: var(--login-transition);
+}
+
+.login-divider {
+    position: relative;
+    text-align: center;
+    margin: 1.5rem 0; /* Reduced margin */
+}
+
+.login-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--login-gray-200);
+}
+
+.login-divider-text {
+    background: var(--login-white);
+    color: var(--login-gray-400);
+    padding: 0 1rem;
+    font-size: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.login-social {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Reduced gap */
+    margin-bottom: 1.5rem;
+}
+
+.login-social-btn {
+    width: 100%;
+    padding: 0.75rem 1.5rem; /* Smaller padding */
+    border: 2px solid var(--login-gray-200);
+    border-radius: var(--login-radius);
+    background: var(--login-white);
+    color: var(--login-gray-700);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--login-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.login-social-btn:hover {
+    background: var(--hover-overlay);
+    border-color: var(--login-gray-300);
+    transform: translateY(-1px);
+    box-shadow: var(--login-shadow-sm);
+}
+
+.login-social-google:hover { border-color: var(--login-danger); color: var(--login-danger); }
+.login-social-github:hover { border-color: var(--login-gray-700); color: var(--login-gray-700); }
+
+.login-register {
+    text-align: center;
+    animation: fadeInUp 1s ease-out 0.7s both;
+}
+
+.login-register-text {
+    color: var(--login-gray-600);
+    font-size: 0.75rem;
+    margin: 0;
+}
+
+.login-register-link {
+    color: var(--login-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--login-transition);
+}
+
+.login-register-link:hover { color: var(--login-primary-dark); text-decoration: underline; }
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .login-container { padding: 0.5rem; }
+    .login-wrapper { max-width: 100%; width: 100%; }
+    .login-header { padding: 1.5rem 1rem 0.75rem; }
+    .login-form-section { padding: 1rem; }
+    .login-brand { font-size: 1.5rem; }
+    .login-title { font-size: 1.25rem; }
+    .login-subtitle { font-size: 0.75rem; }
+    .login-logo { flex-direction: column; gap: 0.5rem; }
+    .login-form-options { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    .login-social { gap: 0.25rem; }
+}
+
+@media (max-width: 480px) {
+    .login-container { padding: 0.25rem; }
+    .login-wrapper { max-width: 100%; }
+    .login-header { padding: 1rem 0.75rem; }
+    .login-form-section { padding: 0.75rem; }
+    .login-bg-decoration { display: none; }
+    .login-floating-element { width: 40px; height: 40px; font-size: 1rem; }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+    .login-container { padding: 0.5rem; align-items: flex-start; padding-top: 1rem; }
+    .login-header { padding: 1rem 1.5rem 0.5rem; }
+    .login-form-section { padding: 1rem 1.5rem; }
+    .login-logo { margin-bottom: 0.5rem; }
+    .login-welcome { margin-bottom: 0; }
+}
+
+.login-form-control:focus,
+.login-submit-btn:focus,
+.login-social-btn:focus {
+    outline: 2px solid var(--login-primary);
+    outline-offset: 2px;
+}
+
+@media (prefers-contrast: high) {
+    .login-card { border: 2px solid var(--login-gray-900); }
+    .login-form-control { border-width: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.theme-toggle-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--login-gray-200);
+    background: var(--login-white);
+    color: var(--login-gray-700);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--login-transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--login-shadow);
+}
+
+.theme-toggle-btn:hover { transform: scale(1.1); box-shadow: var(--login-shadow-lg); }
+
+.theme-icon { position: absolute; font-size: 1.25rem; transition: var(--login-transition); }
+
+:root[data-theme="dark"] .light-icon { opacity: 1; transform: translateY(0); }
+:root[data-theme="dark"] .dark-icon { opacity: 0; transform: translateY(20px); }
+:root[data-theme="light"] .light-icon { opacity: 0; transform: translateY(-20px); }
+:root[data-theme="light"] .dark-icon { opacity: 1; transform: translateY(0); }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+
+    // Password toggle
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye', type === 'password');
+            icon.classList.toggle('fa-eye-slash', type === 'text');
+        });
+    }
+
+    // Form submission loading state
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+        });
+    }
+
+    // Social login placeholders
+    const socialButtons = document.querySelectorAll('.login-social-btn');
+    socialButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const provider = this.classList.contains('login-social-google') ? 'Google' : 'GitHub';
+            alert(`${provider} login would be implemented here!`);
+        });
+    });
+
+    // Input focus animations
+    const inputs = document.querySelectorAll('.login-form-control');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentNode.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+            this.parentNode.classList.remove('focused');
+        });
+    });
+
+    // Auto-focus first input
+    const firstInput = document.querySelector('.login-form-control');
+    if (firstInput) {
+        firstInput.focus();
+    }
+
+    // System theme preference listener
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

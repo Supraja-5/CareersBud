@@ -1,48 +1,79 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="card-title-primary">Resume Builder</h1>
-        <a href="{{ url_for('resume.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i> Create New Resume
-        </a>
+<!-- Hero Section -->
+<div class="hero-dashboard">
+    <div class="hero-gradient"></div>
+    <div class="container position-relative">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div class="hero-content">
+                <h1 class="hero-title">ResumeBud</h1>
+                <p class="hero-subtitle">Create stunning, ATS-optimized resumes that get you hired</p>
+            </div>
+            <a href="{{ url_for('resume.create') }}" class="btn btn-hero">
+                <i class="fas fa-plus me-2"></i> Create New Resume
+            </a>
+        </div>
     </div>
+</div>
 
-    <div class="row mb-4">
+<div class="container dashboard-content" style="margin-top:30px;">
+    <!-- Stats Cards -->
+    <div class="row mb-5">
         <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h2 class="card-title-secondary mb-3">Welcome to the Resume Builder</h2>
-                    <p>Create professional resumes with our AI-powered tools. Our intelligent resume builder will help you:</p>
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item bg-transparent">
-                            <i class="fas fa-check-circle text-success me-2"></i> 
-                            Optimize your resume for Applicant Tracking Systems (ATS)
-                        </li>
-                        <li class="list-group-item bg-transparent">
-                            <i class="fas fa-check-circle text-success me-2"></i> 
-                            Generate impactful bullet points and summaries
-                        </li>
-                        <li class="list-group-item bg-transparent">
-                            <i class="fas fa-check-circle text-success me-2"></i> 
-                            Target specific job descriptions with keyword optimization
-                        </li>
-                        <li class="list-group-item bg-transparent">
-                            <i class="fas fa-check-circle text-success me-2"></i> 
-                            Choose from multiple professional templates
-                        </li>
-                        <li class="list-group-item bg-transparent">
-                            <i class="fas fa-check-circle text-success me-2"></i> 
-                            Maintain multiple versions of your resume for different careers
-                        </li>
-                    </ul>
+            <div class="welcome-card">
+                <div class="card-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="welcome-content">
+                    <h2 class="welcome-title">Welcome to the ResumeBud</h2>
+                    <p class="welcome-description">Create professional resumes with our AI-powered tools. Our intelligent resume builder will help you:</p>
+                    
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <span>ATS Optimization</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <span>AI-Generated Content</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-target"></i>
+                            </div>
+                            <span>Keyword Optimization</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-palette"></i>
+                            </div>
+                            <span>Professional Templates</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-clone"></i>
+                            </div>
+                            <span>Multiple Versions</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>Performance Analytics</span>
+                        </div>
+                    </div>
+                    
                     {% if not resumes %}
-                    <div class="text-center">
-                        <a href="{{ url_for('resume.create') }}" class="btn btn-primary btn-lg">
+                    <div class="cta-section">
+                        <a href="{{ url_for('resume.create') }}" class="btn btn-primary-gradient btn-lg">
                             <i class="fas fa-plus me-2"></i> Create Your First Resume
                         </a>
-                        <a href="{{ url_for('resume.templates') }}" class="btn btn-outline-secondary btn-lg ms-2">
+                        <a href="{{ url_for('resume.templates') }}" class="btn btn-outline-primary btn-lg ms-3">
                             <i class="fas fa-palette me-2"></i> Explore Templates
                         </a>
                     </div>
@@ -50,91 +81,110 @@
                 </div>
             </div>
         </div>
+        
         <div class="col-lg-4">
-            <div class="card bg-gradient-primary text-white">
-                <div class="card-body">
-                    <h3 class="mb-3"><i class="fas fa-lightbulb me-2"></i> Resume Tips</h3>
-                    <p>Include quantifiable achievements and metrics in your bullet points to demonstrate impact.</p>
-                    <p>Tailor your resume for each application by including keywords from the job description.</p>
-                    <p>Keep your resume concise - one or two pages is ideal for most positions.</p>
-                    <hr class="my-3 border-white opacity-25">
-                    <a href="#" class="btn btn-light">More Tips</a>
+            <div class="tips-card">
+                <div class="tips-header">
+                    <div class="tips-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Pro Tips</h3>
+                </div>
+                <div class="tips-content">
+                    <div class="tip-item">
+                        <div class="tip-number">1</div>
+                        <p>Include quantifiable achievements and metrics to demonstrate impact</p>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">2</div>
+                        <p>Tailor your resume for each application with relevant keywords</p>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-number">3</div>
+                        <p>Keep it concise - one or two pages is ideal for most positions</p>
+                    </div>
+                </div>
+                <div class="tips-footer">
+                    <a href="#" class="btn btn-tips">More Expert Tips</a>
                 </div>
             </div>
         </div>
     </div>
 
     {% if resumes %}
-    <h2 class="mb-3">Your Resumes</h2>
-    <div class="row">
-        {% for resume in resumes %}
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100 resume-card {% if resume.is_primary %}border-primary{% endif %}">
+    <!-- Resumes Section -->
+    <div class="resumes-section">
+        <div class="section-header">
+            <h2 class="section-title">Your Resumes</h2>
+            <div class="resume-stats">
+                <span class="stat-badge">{{ resumes|length }} Resume{{ 's' if resumes|length != 1 else '' }}</span>
+            </div>
+        </div>
+        
+        <div class="resumes-grid">
+            {% for resume in resumes %}
+            <div class="resume-card {% if resume.is_primary %}primary-resume{% endif %}">
                 {% if resume.is_primary %}
-                <div class="position-absolute top-0 end-0 mt-2 me-2">
-                    <span class="badge bg-primary px-3 py-2">
-                        <i class="fas fa-star me-1"></i> Primary
-                    </span>
+                <div class="primary-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Primary</span>
                 </div>
                 {% endif %}
-                <div class="card-body">
-                    <h3 class="card-title">{{ resume.title }}</h3>
-                    <p class="text-muted small">Last updated: {{ resume.updated_at.strftime('%b %d, %Y') }}</p>
-                    
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">Template:</span>
-                        <span>{{ resume.template|capitalize }}</span>
+                
+                <div class="resume-preview">
+                    <div class="resume-thumbnail">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="resume-overlay">
+                        <a href="{{ url_for('resume.view', resume_id=resume.id) }}" class="preview-btn">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="resume-info">
+                    <h3 class="resume-title">{{ resume.title }}</h3>
+                    <div class="resume-meta">
+                        <span class="update-time">
+                            <i class="fas fa-clock"></i>
+                            {{ resume.updated_at.strftime('%b %d, %Y') }}
+                        </span>
+                        <span class="template-type">{{ resume.template|capitalize }}</span>
                     </div>
                     
                     {% if resume.ats_score > 0 %}
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-muted">ATS Score:</span>
-                            <span class="fw-bold 
-                                {% if resume.ats_score >= 80 %}text-success
-                                {% elif resume.ats_score >= 60 %}text-primary
-                                {% elif resume.ats_score >= 40 %}text-warning
-                                {% else %}text-danger{% endif %}">
+                    <div class="ats-score">
+                        <div class="score-header">
+                            <span>ATS Score</span>
+                            <span class="score-value score-{{ 'excellent' if resume.ats_score >= 80 else 'good' if resume.ats_score >= 60 else 'fair' if resume.ats_score >= 40 else 'poor' }}">
                                 {{ resume.ats_score }}%
                             </span>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar 
-                                {% if resume.ats_score >= 80 %}bg-success
-                                {% elif resume.ats_score >= 60 %}bg-primary
-                                {% elif resume.ats_score >= 40 %}bg-warning
-                                {% else %}bg-danger{% endif %}" 
-                                role="progressbar" 
-                                style="width: {{ resume.ats_score }}%;" 
-                                aria-valuenow="{{ resume.ats_score }}" 
-                                aria-valuemin="0" 
-                                aria-valuemax="100">
-                            </div>
+                        <div class="score-bar">
+                            <div class="score-fill score-{{ 'excellent' if resume.ats_score >= 80 else 'good' if resume.ats_score >= 60 else 'fair' if resume.ats_score >= 40 else 'poor' }}" 
+                                 style="width: {{ resume.ats_score }}%;"></div>
                         </div>
                     </div>
                     {% endif %}
-                </div>
-                <div class="card-footer bg-transparent">
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('resume.view', resume_id=resume.id) }}" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-eye me-1"></i> Preview
-                        </a>
-                        <a href="{{ url_for('resume.edit', resume_id=resume.id) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-pencil-alt me-1"></i> Edit
+                    
+                    <div class="resume-actions">
+                        <a href="{{ url_for('resume.edit', resume_id=resume.id) }}" class="action-btn primary">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Edit</span>
                         </a>
                         <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="resumeOptions{{ resume.id }}" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
+                            <button class="action-btn secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-h"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="resumeOptions{{ resume.id }}">
+                            <ul class="dropdown-menu dropdown-menu-modern">
                                 <li>
                                     <a href="{{ url_for('resume.export', resume_id=resume.id) }}" class="dropdown-item">
-                                        <i class="fas fa-file-pdf me-2 text-danger"></i> Export as PDF
+                                        <i class="fas fa-file-pdf"></i> Export as PDF
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{ url_for('resume.analyze', resume_id=resume.id) }}" class="dropdown-item">
-                                        <i class="fas fa-chart-line me-2 text-info"></i> Analyze
+                                        <i class="fas fa-chart-line"></i> Analyze
                                     </a>
                                 </li>
                                 {% if not resume.is_primary %}
@@ -142,15 +192,15 @@
                                     <form action="{{ url_for('resume.make_primary', resume_id=resume.id) }}" method="POST">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="dropdown-item">
-                                            <i class="fas fa-star me-2 text-warning"></i> Make Primary
+                                            <i class="fas fa-star"></i> Make Primary
                                         </button>
                                     </form>
                                 </li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteResumeModal" data-resume-id="{{ resume.id }}" data-resume-title="{{ resume.title }}">
-                                        <i class="fas fa-trash-alt me-2"></i> Delete
+                                    <button type="button" class="dropdown-item danger" data-bs-toggle="modal" data-bs-target="#deleteResumeModal" data-resume-id="{{ resume.id }}" data-resume-title="{{ resume.title }}">
+                                        <i class="fas fa-trash-alt"></i> Delete
                                     </button>
                                 </li>
                             </ul>
@@ -158,75 +208,62 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
     {% endif %}
 
     <!-- Recommendations Section -->
-    <div class="mt-5">
-        <h2 class="mb-4">Improve Your Resume</h2>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-sync-alt fa-3x text-primary"></i>
-                        </div>
-                        <h3 class="card-title text-center">ATS Optimization</h3>
-                        <p class="card-text">Scan your resume against ATS systems to ensure it passes through automated filters.</p>
-                    </div>
-                    <div class="card-footer text-center bg-transparent">
-                        <a href="{{ url_for('resume.templates') }}" class="btn btn-outline-primary">Learn More</a>
-                    </div>
+    <div class="recommendations-section">
+        <h2 class="section-title">Boost Your Career</h2>
+        <div class="recommendations-grid">
+            <div class="recommendation-card">
+                <div class="rec-icon ats">
+                    <i class="fas fa-sync-alt"></i>
                 </div>
+                <h3>ATS Optimization</h3>
+                <p>Scan your resume against ATS systems to ensure it passes through automated filters and reaches human recruiters.</p>
+                <a href="{{ url_for('resume.templates') }}" class="rec-btn">Optimize Now</a>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-magic fa-3x text-primary"></i>
-                        </div>
-                        <h3 class="card-title text-center">AI Enhancement</h3>
-                        <p class="card-text">Use our AI tools to improve your bullet points and create compelling summaries.</p>
-                    </div>
-                    <div class="card-footer text-center bg-transparent">
-                        <a href="{{ url_for('resume.templates') }}" class="btn btn-outline-primary">Learn More</a>
-                    </div>
+            
+            <div class="recommendation-card">
+                <div class="rec-icon ai">
+                    <i class="fas fa-magic"></i>
                 </div>
+                <h3>AI Enhancement</h3>
+                <p>Use our advanced AI tools to improve your bullet points and create compelling summaries that stand out.</p>
+                <a href="{{ url_for('resume.templates') }}" class="rec-btn">Enhance Resume</a>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-file-alt fa-3x text-primary"></i>
-                        </div>
-                        <h3 class="card-title text-center">Template Gallery</h3>
-                        <p class="card-text">Choose from our collection of professional templates designed for different industries.</p>
-                    </div>
-                    <div class="card-footer text-center bg-transparent">
-                        <a href="{{ url_for('resume.templates') }}" class="btn btn-outline-primary">Browse Templates</a>
-                    </div>
+            
+            <div class="recommendation-card">
+                <div class="rec-icon templates">
+                    <i class="fas fa-file-alt"></i>
                 </div>
+                <h3>Template Gallery</h3>
+                <p>Choose from our collection of professional templates designed for different industries and career levels.</p>
+                <a href="{{ url_for('resume.templates') }}" class="rec-btn">Browse Templates</a>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Delete Resume Modal -->
-<div class="modal fade" id="deleteResumeModal" tabindex="-1" aria-labelledby="deleteResumeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="deleteResumeModal" tabindex="-1">
+    <div class="modal-dialog modal-modern">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteResumeModalLabel">
-                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                    Delete Resume
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="modal-title-section">
+                    <h5 class="modal-title">Delete Resume</h5>
+                    <p class="modal-subtitle">This action cannot be undone</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete the resume "<span id="deleteResumeTitle"></span>"?</p>
-                <p class="text-danger fw-bold">This action cannot be undone.</p>
+                <p>Are you sure you want to delete the resume "<span id="deleteResumeTitle" class="fw-bold"></span>"?</p>
+                <p class="warning-text">All data associated with this resume will be permanently removed.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -238,30 +275,918 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Using existing theme variables */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 12px 32px rgba(0, 0, 0, 0.2);
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-theme="dark"] {
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-heavy: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+body {
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    color: var(--text-primary);
+}
+
+/* Hero Section */
+.hero-dashboard {
+    position: relative;
+    padding: 60px 0 40px;
+    overflow: hidden;
+    background: var(--bg-gradient);
+}
+
+.hero-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--hover-overlay);
+}
+
+.hero-content {
+    color: var(--text-primary);
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.btn-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 14px 28px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    margin-top: -20px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Welcome Card */
+.welcome-card {
+    background: var(--card-gradient);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient);
+}
+
+.card-icon {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: var(--primary-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.welcome-description {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--hover-overlay);
+    border-radius: 8px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.feature-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+    background: var(--card-bg);
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-gradient);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.cta-section {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn-primary-gradient {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.btn-primary-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+    color: white;
+    opacity: 0.9;
+}
+
+/* Tips Card */
+.tips-card {
+    background: var(--primary-gradient);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    color: white;
+    height: 100%;
+}
+
+.tips-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 2rem 1rem;
+}
+
+.tips-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--glass-bg);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.tips-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.tips-content {
+    padding: 0 2rem;
+}
+
+.tip-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+}
+
+.tip-number {
+    width: 28px;
+    height: 28px;
+    background: var(--glass-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.tip-item p {
+    margin: 0;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.tips-footer {
+    padding: 1rem 2rem 2rem;
+}
+
+.btn-tips {
+    background: var(--glass-bg);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.btn-tips:hover {
+    background: white;
+    color: var(--primary-color);
+}
+
+/* Resumes Section */
+.resumes-section {
+    margin: 4rem 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-badge {
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+}
+
+.resumes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.resume-card {
+    background: var(--card-gradient);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+    position: relative;
+    border: 1px solid var(--border-color);
+}
+
+.resume-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.primary-resume {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.primary-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    z-index: 2;
+}
+
+.resume-preview {
+    position: relative;
+    height: 180px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.resume-thumbnail {
+    font-size: 4rem;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.resume-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.resume-card:hover .resume-overlay {
+    opacity: 1;
+}
+
+.preview-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.preview-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+    border-color: var(--primary-color);
+}
+
+.resume-info {
+    padding: 1.5rem;
+}
+
+.resume-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.resume-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.update-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.template-type {
+    background: var(--bg-secondary);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.ats-score {
+    margin-bottom: 1.5rem;
+}
+
+.score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.score-value {
+    font-weight: 600;
+}
+
+.score-excellent { color: var(--success-color); }
+.score-good { color: var(--primary-color); }
+.score-fair { color: var(--warning-color); }
+.score-poor { color: var(--danger-color); }
+
+.score-bar {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+}
+
+.score-fill.score-excellent { background: var(--success-color); }
+.score-fill.score-good { background: var(--primary-color); }
+.score-fill.score-fair { background: var(--warning-color); }
+.score-fill.score-poor { background: var(--danger-color); }
+
+.resume-actions {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.action-btn.primary {
+    background: var(--primary-gradient);
+    color: white;
+    flex: 1;
+    justify-content: center;
+}
+
+.action-btn.secondary {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+}
+
+.action-btn.primary:hover {
+    color: white;
+    opacity: 0.9;
+}
+
+.action-btn.secondary:hover {
+    background: var(--hover-overlay);
+    color: var(--text-primary);
+} none;
+    cursor: pointer;
+}
+
+.action-btn.primary {
+    background: var(--primary-gradient);
+    color: white;
+    flex: 1;
+    justify-content: center;
+}
+
+.action-btn.secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+    padding: 8px 12px;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+}
+
+.action-btn.primary:hover {
+    color: white;
+}
+
+/* Dropdown */
+.dropdown-menu-modern {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+    padding: 0.5rem 0;
+}
+
+.dropdown-menu-modern .dropdown-item {
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: var(--transition);
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: var(--text-primary);
+}
+
+.dropdown-menu-modern .dropdown-item:hover {
+    background: var(--hover-overlay);
+    color: var(--text-primary);
+}
+
+.dropdown-menu-modern .dropdown-item.danger {
+    color: var(--danger-color);
+}
+
+.dropdown-menu-modern .dropdown-item.danger:hover {
+    background: rgba(248, 81, 73, 0.1);
+    color: var(--danger-color);
+}
+
+/* Recommendations Section */
+.recommendations-section {
+    margin: 4rem 0;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.recommendation-card {
+    background: var(--card-gradient);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+}
+
+.recommendation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.rec-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: white;
+}
+
+.rec-icon.ats { background: var(--primary-gradient); }
+.rec-icon.ai { background: var(--secondary-gradient); }
+.rec-icon.templates { background: linear-gradient(145deg, var(--tertiary-color), var(--warning-color)); }
+
+.recommendation-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.recommendation-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.rec-btn {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.rec-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-light);
+    color: white;
+    opacity: 0.9;
+}
+
+/* Modal */
+.modal-modern .modal-content {
+    background: var(--card-bg);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid var(--border-color);
+}
+
+.modal-modern .modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.modal-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(145deg, var(--danger-color), #ff6b6b);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.modal-title-section {
+    flex: 1;
+}
+
+.modal-modern .modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.modal-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.modal-modern .modal-body {
+    padding: 1rem 2rem;
+    color: var(--text-primary);
+}
+
+.warning-text {
+    color: var(--danger-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.modal-modern .modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 2rem 2rem;
+}
+
+.modal-modern .btn {
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+.modal-modern .btn-danger {
+    background: var(--danger-color);
+    border: none;
+    color: white;
+}
+
+.modal-modern .btn-danger:hover {
+    background: var(--danger-color);
+    opacity: 0.9;
+    color: white;
+}
+
+.modal-modern .btn-secondary {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.modal-modern .btn-secondary:hover {
+    background: var(--hover-overlay);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .btn-hero {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .welcome-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .card-icon {
+        position: static;
+        margin: 0 auto 1rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .cta-section .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .cta-section .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .resumes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .resume-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .resume-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn.secondary {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-content {
+        padding: 0 1rem;
+    }
+    
+    .hero-dashboard {
+        padding: 40px 0 20px;
+    }
+    
+    .modal-modern .modal-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .modal-modern .modal-body {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modal-modern .modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+    }
+}
+
+/* Animation enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resume-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.resume-card:nth-child(2) { animation-delay: 0.1s; }
+.resume-card:nth-child(3) { animation-delay: 0.2s; }
+.resume-card:nth-child(4) { animation-delay: 0.3s; }
+
+.recommendation-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.recommendation-card:nth-child(2) { animation-delay: 0.2s; }
+.recommendation-card:nth-child(3) { animation-delay: 0.4s; }
+</style>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Setup the delete resume modal
-        const deleteResumeModal = document.getElementById('deleteResumeModal');
-        if (deleteResumeModal) {
-            deleteResumeModal.addEventListener('show.bs.modal', function(event) {
-                // Button that triggered the modal
-                const button = event.relatedTarget;
-                
-                // Extract resume info
-                const resumeId = button.getAttribute('data-resume-id');
-                const resumeTitle = button.getAttribute('data-resume-title');
-                
-                // Update the modal content
-                document.getElementById('deleteResumeTitle').textContent = resumeTitle;
-                
-                // Update the form's action URL
-                const form = document.getElementById('deleteResumeForm');
-                form.action = "{{ url_for('resume.delete', resume_id=0) }}".replace('/0', '/' + resumeId);
-            });
-        }
-    });
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup the delete resume modal
+    const deleteResumeModal = document.getElementById('deleteResumeModal');
+    if (deleteResumeModal) {
+        deleteResumeModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const resumeId = button.getAttribute('data-resume-id');
+            const resumeTitle = button.getAttribute('data-resume-title');
+            
+            document.getElementById('deleteResumeTitle').textContent = resumeTitle;
+            
+            const form = document.getElementById('deleteResumeForm');
+            form.action = "{{ url_for('resume.delete', resume_id=0) }}".replace('/0', '/' + resumeId);
+        });
+    }
+    
+    // Animate ATS score bars on load
+    const scoreElements = document.querySelectorAll('.score-fill');
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const scoreBar = entry.target;
+                const width = scoreBar.style.width;
+                scoreBar.style.width = '0%';
+                setTimeout(() => {
+                    scoreBar.style.width = width;
+                }, 200);
+            }
+        });
+    }, observerOptions);
+    
+    scoreElements.forEach(el => observer.observe(el));
+});
 </script>
 {% endblock %}

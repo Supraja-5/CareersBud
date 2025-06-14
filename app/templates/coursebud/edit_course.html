@@ -65,8 +65,15 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="learning_objectives" class="form-label">Learning Objectives</label>
-                                    <textarea class="form-control" id="learning_objectives" name="learning_objectives" rows="4" placeholder="What will students learn? Enter one objective per line.">{{ course.learning_objectives if course.learning_objectives else "" }}</textarea>
+                                    <label for="{{ form.learning_obj.id }}" class="form-label">{{ form.learning_obj.label }}</label>
+                                    {{ form.learning_obj(class="form-control" + (" is-invalid" if form.learning_obj.errors else ""), rows=4, placeholder="What will students learn? Enter one objective per line.") }}
+                                    {% if form.learning_obj.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.learning_obj.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                     <div class="form-text">List what students will learn, one objective per line. These appear on your course landing page.</div>
                                 </div>
                                 

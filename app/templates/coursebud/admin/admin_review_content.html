@@ -1,21 +1,7 @@
-{% extends 'base.html' %}
-
-{% block content %}
 <div class="container py-4" data-course-id="{{ course.id }}">
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url_for('coursebud.index') }}">CourseBud</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('coursebud.teach') }}">Instructor Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}">{{ course.title }}</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Manage Content</li>
-                </ol>
-            </nav>
-            <h1 class="mt-2 mb-1">{{ course.title }}</h1>
-            <p class="text-muted mb-3">Organize your course content by adding sections and lessons.</p>
-            
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
                     <span class="badge bg-primary me-2">{{ course.category.name }}</span>
@@ -24,25 +10,16 @@
                         {{ course.status|title }}
                     </span>
                 </div>
-                <form action="{{ url_for('coursebud.submit_for_review', course_id=course.id) }}" method="post">
-                    {{lesson_form.hidden_tag()}}
-                    <button type="submit" class="btn btn-success" {% if course.status != 'draft' and course.status != 'rejected' %}disabled{% endif %}>
-                        <i class="fas fa-paper-plane me-2"></i> Submit for Review
-                    </button>
-                </form>
             </div>
         </div>
     </div>
 
     <div class="row">
         <!-- Course Content -->
-        <div class="col-lg-8 mb-4">
+        <div class="col-lg-8 mb-4" style="width:800px;">
             <div class="card shadow-sm">
                 <div class="card-header bg-light d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Course Content</h3>
-                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSectionModal">
-                        <i class="fas fa-plus me-1"></i> Add Section
-                    </button>
                 </div>
                 <div class="card-body p-0">
                     {% if sections %}
@@ -137,87 +114,6 @@
                             </button>
                         </div>
                     {% endif %}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Course Details and Tips -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Course Status</h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Sections:</span>
-                        <span class="fw-bold">{{ sections|length }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Lessons:</span>
-                        <span class="fw-bold">
-                            {% set total_lessons = 0 %}
-                            {% for section in sections %}
-                                {% set total_lessons = total_lessons + section.lessons|length %}
-                            {% endfor %}
-                            {{ total_lessons }}
-                        </span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Free Preview Lessons:</span>
-                        <span class="fw-bold">
-                            {% set free_previews = 0 %}
-                            {% for section in sections %}
-                                {% for lesson in section.lessons %}
-                                    {% if lesson.is_free_preview %}
-                                        {% set free_previews = free_previews + 1 %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endfor %}
-                            {{ free_previews }}
-                        </span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="mb-3">
-                        <div class="fw-bold mb-1">Submission Readiness:</div>
-                        <ul class="list-unstyled mb-0">
-                            <li class="d-flex align-items-center mb-1">
-                                <i class="fas {% if sections|length > 0 %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                                <span>Course has at least one section</span>
-                            </li>
-                            <li class="d-flex align-items-center mb-1">
-                                <i class="fas {% if total_lessons > 0 %}fa-check text-success{% else %}fa-times text-danger{% endif %} me-2"></i>
-                                <span>Course has at least one lesson</span>
-                            </li>
-                            <li class="d-flex align-items-center">
-                                <i class="fas {% if free_previews > 0 %}fa-check text-success{% else %}fa-exclamation-triangle text-warning{% endif %} me-2"></i>
-                                <span>Course has at least one free preview lesson</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    {% if course.status == 'rejected' and course.approval_notes %}
-                        <div class="alert alert-danger">
-                            <h6 class="alert-heading">Rejection Feedback:</h6>
-                            <p class="mb-0">{{ course.approval_notes }}</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Tips for Course Structure</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="mb-0">
-                        <li class="mb-2">Keep your sections organized around specific topics or themes</li>
-                        <li class="mb-2">Name lessons clearly with action-oriented titles</li>
-                        <li class="mb-2">Include a mix of content types (video, text, quizzes)</li>
-                        <li class="mb-2">Provide at least one free preview lesson to showcase your teaching style</li>
-                        <li class="mb-2">Keep individual lessons short (5-15 minutes) to maintain engagement</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -354,33 +250,40 @@
                     {{ section_form.csrf_token }}
                     <div class="mb-3">
                         <label for="edit-lesson-title" class="form-label">Lesson Title</label>
-                        <input type="text" class="form-control" id="edit-lesson-title" name="title" required>
+                        <p id="edit-lesson-title" class="border rounded p-2" name="title" style="min-height: 38px;">
+                            </p>
+                        <!-- <input type="text" class="form-control" id="edit-lesson-title" name="title" required> -->
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="edit-lesson-content-type" class="form-label">Content Type</label>
-                            <select class="form-select" id="edit-lesson-content-type" name="content_type">
-                                <option value="video">Video</option>
-                                <option value="text">Text Content</option>
-                                <option value="quiz">Quiz</option>
-                                <option value="resource">Downloadable Resource</option>
-                            </select>
+                            <p id="edit-lesson-content-type" class="border rounded p-2" style="min-height: 38px;">
+                            </p>
                         </div>
                         <div class="col-md-6">
                             <label for="edit-lesson-duration" class="form-label">Duration (minutes)</label>
-                            <input type="number" class="form-control" id="edit-lesson-duration" name="duration" min="1">
+                            <p id="edit-lesson-duration" class="border rounded p-2" style="min-height: 38px;">
+                            </p>
                         </div>
                     </div>
                     
                     <div class="mb-3">
                         <label for="edit-lesson-content" class="form-label">Content/URL</label>
-                        <textarea class="form-control" id="edit-lesson-content" name="content" rows="5" required></textarea>
+                        {# {% if lesson_form.content.data %}
+                            <a href="{{ lesson_form.content.data }}" target="_blank" class="btn btn-outline-primary">
+                                Open Content
+                            </a>
+                        {% else %}
+                            {{ lesson_form.content(class="form-control", id="edit-lesson-content", rows=5, required=True) }}
+                        {% endif %} #}
+                        <div id="edit-content-area"></div>
+                        <!-- <textarea class="form-control" id="edit-lesson-content" name="content" rows="5" required></textarea> -->
                     </div>
                     
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="edit-lesson-is-free-preview" name="is_free_preview">
-                        <label class="form-check-label" for="edit-lesson-is-free-preview">Free Preview Lesson</label>
+                        <input type="checkbox" class="form-check-input" style="pointer-events: none; opacity: 1;" id="edit-lesson-is-free-preview" name="is_free_preview">
+                        <label class="form-check-label" for="edit-lesson-is-free-preview" style="pointer-events: none; opacity: 1;">Free Preview Lesson</label>
                     </div>
                     
                     <input type="hidden" name="lesson_id" id="editLessonId">
@@ -424,14 +327,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const lessonId = this.getAttribute('data-lesson-id');
             const lessonTitle = this.getAttribute('data-lesson-title');
             const lessonContentType = this.getAttribute('data-lesson-content-type');
-            const lessonContent = this.getAttribute('data-lesson-content');
+            const lessonContent = this.getAttribute('data-lesson-content') || '';
             const lessonDuration = this.getAttribute('data-lesson-duration');
             const lessonIsFreePreview = this.getAttribute('data-lesson-is-free-preview') === 'True';
 
-            document.getElementById('edit-lesson-title').value = lessonTitle;
-            document.getElementById('edit-lesson-content-type').value = lessonContentType;
-            document.getElementById('edit-lesson-content').value = lessonContent;
-            document.getElementById('edit-lesson-duration').value = lessonDuration;
+            // Handle dynamic content area
+            const contentArea = document.getElementById('edit-content-area');
+            if (lessonContent.startsWith('http')) {
+                contentArea.innerHTML = `
+                    <a href="${lessonContent}" target="_blank" class="btn btn-outline-primary mb-2">
+                        Open Content
+                    </a>
+                    <input type="hidden" name="content" value="${lessonContent}" />
+                `;
+            } else {
+                contentArea.innerHTML = `
+                    <textarea class="form-control" id="edit-lesson-content" name="content" rows="5" required></textarea>
+                `;
+                document.getElementById('edit-lesson-content').value = lessonContent;
+            }
+
+            // Fill in the rest of the modal inputs
+            document.getElementById('edit-lesson-title').textContent = lessonTitle;
+            document.getElementById('edit-lesson-content-type').textContent = lessonContentType;
+            document.getElementById('edit-lesson-duration').textContent = lessonDuration;
             document.getElementById('edit-lesson-is-free-preview').checked = lessonIsFreePreview;
             document.getElementById('editLessonId').value = lessonId;
         });
@@ -464,4 +383,3 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('sectionOrder').value = sectionCount;
 });
 </script>
-{% endblock %}

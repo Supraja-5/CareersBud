@@ -1,60 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} | Admin Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-</head>
-<body class="bg-gray-100">
-    <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <aside class="bg-indigo-800 text-white w-64 py-4 flex-shrink-0">
-            <div class="px-6 py-4">
-                <h1 class="text-2xl font-semibold">Admin Panel</h1>
-            </div>
-            <nav class="mt-8">
-                <a href="{{ url_for('admin.admin_dashboard') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_dashboard' else '' }}">
-                    <i class="fas fa-tachometer-alt mr-3"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ url_for('admin.admin_courses') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_courses' else '' }}">
-                    <i class="fas fa-book mr-3"></i>
-                    <span>Courses</span>
-                </a>
-                <a href="{{ url_for('admin.admin_pending_courses') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_pending_courses' else '' }}">
-                    <i class="fas fa-hourglass-half mr-3"></i>
-                    <span>Pending Approval</span>
-                </a>
-                <a href="{{ url_for('admin.admin_users') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_users' else '' }}">
-                    <i class="fas fa-users mr-3"></i>
-                    <span>Users</span>
-                </a>
-                <a href="{{ url_for('admin.admin_categories') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_categories' else '' }}">
-                    <i class="fas fa-tag mr-3"></i>
-                    <span>Categories</span>
-                </a>
-                <a href="{{ url_for('admin.admin_revenue_report') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_revenue_report' else '' }}">
-                    <i class="fas fa-chart-line mr-3"></i>
-                    <span>Revenue</span>
-                </a>
-                <a href="{{ url_for('admin.admin_settings') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_settings' else '' }}">
-                    <i class="fas fa-cog mr-3"></i>
-                    <span>Settings</span>
-                </a>
-                <a href="{{ url_for('admin.admin_logs') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700 {{ 'bg-indigo-700' if request.endpoint == 'admin.admin_logs' else '' }}">
-                    <i class="fas fa-clipboard-list mr-3"></i>
-                    <span>System Logs</span>
-                </a>
-                <a href="{{ url_for('main.index') }}" class="flex items-center px-6 py-3 hover:bg-indigo-700">
-                    <i class="fas fa-home mr-3"></i>
-                    <span>Back to Site</span>
-                </a>
-            </nav>
-        </aside>
+{% extends 'coursebud/admin/admin_base.html' %}
 
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100">
+    <div class="min-h-screen flex">
         <!-- Main Content -->
         <div class="flex-1 overflow-x-hidden overflow-y-auto">
             <header class="bg-white shadow">
@@ -87,9 +37,6 @@
 
             <!-- Page Content -->
             <main class="container mx-auto px-6 py-4">
-                {% block content %}
-                <!-- Dynamic content here -->
-                {% endblock %}
             </main>
         </div>
     </div>
@@ -103,5 +50,5 @@
 
     {% block scripts %}
     {% endblock %}
-</body>
-</html>
+</div>
+{% endblock %}

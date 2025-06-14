@@ -496,7 +496,7 @@
                             <div class="d-flex align-items-center">
                                 <div class="avatar me-3" style="object-fit: cover; width: 40px; height: 40px;">
                                     {% if post.user.profile_picture %}
-                                            <img src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_picture) }}"
+                                            <img src="{{ url_for('static', filename='uploads/profiles/' ~ post.user.profile_picture) }}"
                                                 alt="Profile Picture"
                                                 class="rounded-circle"
                                                 style="object-fit: cover; width: 40px; height: 40px;">
