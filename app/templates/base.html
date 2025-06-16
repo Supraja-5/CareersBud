@@ -49,7 +49,7 @@
             <div class="sidebar-header">
                 <h2 class="brand-name">CareersBud</h2>
             </div>
-            
+
             <!-- Theme Toggle for Mobile (in sidebar) -->
             <div class="sidebar-theme-toggle">
                 <label class="theme-label">
@@ -62,7 +62,7 @@
                     </span>
                 </label>
             </div>
-            
+
             <div class="sidebar-content" id="sidebarContent">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -92,7 +92,7 @@
                     <!-- Add TaskBud as a premium feature -->
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint and request.endpoint.startswith('taskbud.') %}active{% endif %}"
-                        href="{{ url_for('taskbud.index') }}">
+                            href="{{ url_for('taskbud.index') }}">
                             <i class="fas fa-check-square"></i> Task Bud
                         </a>
                     </li>
@@ -163,6 +163,11 @@
                         <a class="nav-link {% if request.endpoint == 'auth.profile' %}active{% endif %}"
                             href="{{ url_for('auth.profile') }}">
                             <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                            <i class="fas fa-cog me-2"></i>Settings & Privacy
                         </a>
                     </li>
                     <li class="nav-item">
@@ -250,9 +255,10 @@
             <div class="content-wrapper">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    <div id="flash-container" class="position-fixed top-0 start-50 translate-middle-x mt-3 z-999" style="min-width: 300px;">
+                <div id="flash-container" class="position-fixed top-0 start-50 translate-middle-x mt-3 z-999"
+                    style="min-width: 300px;">
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ 
+                    <div class="alert alert-{{ 
                         'success' if category == 'success' else
                         'danger' if category == 'danger' else
                         'warning' if category == 'warning' else
@@ -261,9 +267,9 @@
                         }} alert-dismissible fade show" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
                     </div>
+                    {% endfor %}
+                </div>
                 {% endif %}
                 {% endwith %}
                 {% block content %}{% endblock %}
@@ -317,15 +323,15 @@
     </script>
 
     <script>
-    // Automatically fade out flash messages after 3 seconds
-    setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-        alert.classList.remove('show');
-        alert.classList.add('fade');
-        setTimeout(() => alert.remove(), 500); // Remove after fade transition
-        });
-    }, 3000);
+        // Automatically fade out flash messages after 3 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                setTimeout(() => alert.remove(), 500); // Remove after fade transition
+            });
+        }, 3000);
     </script>
 
     <script>
@@ -334,12 +340,12 @@
             const sidebarToggle = document.getElementById('sidebarToggle');
             const headerThemeToggle = document.getElementById('theme-toggle');
             const sidebarThemeToggle = document.getElementById('sidebar-theme-toggle');
-            
+
             // Sync the initial state
             function syncToggleStates() {
                 const currentTheme = localStorage.getItem('theme') || 'dark';
                 const isLight = currentTheme === 'light';
-                
+
                 if (headerThemeToggle) {
                     headerThemeToggle.checked = isLight;
                 }
@@ -347,19 +353,19 @@
                     sidebarThemeToggle.checked = isLight;
                 }
             }
-            
+
             // Function to change theme
             function changeTheme(isLight) {
                 // Prevent transition flicker
                 document.documentElement.classList.add('theme-transition');
-                
+
                 const theme = isLight ? 'light' : 'dark';
-                
+
                 // Apply theme to both document element and body
                 document.documentElement.setAttribute('data-theme', theme);
                 document.body.setAttribute('data-theme', theme);
                 localStorage.setItem('theme', theme);
-                
+
                 // Sync both toggles
                 if (headerThemeToggle) {
                     headerThemeToggle.checked = isLight;
@@ -367,27 +373,27 @@
                 if (sidebarThemeToggle) {
                     sidebarThemeToggle.checked = isLight;
                 }
-                
+
                 // Remove transition prevention class after a delay
                 setTimeout(function () {
                     document.documentElement.classList.remove('theme-transition');
                 }, 300);
             }
-            
+
             // Header theme toggle event
             if (headerThemeToggle) {
                 headerThemeToggle.addEventListener('change', function () {
                     changeTheme(this.checked);
                 });
             }
-            
+
             // Sidebar theme toggle event
             if (sidebarThemeToggle) {
                 sidebarThemeToggle.addEventListener('change', function () {
                     changeTheme(this.checked);
                 });
             }
-            
+
             // Initialize toggle states
             syncToggleStates();
 
@@ -477,6 +483,2455 @@
 
     {% block extra_scripts %}{% endblock %}
 
+    <!-- CareersBud Comprehensive Settings & Privacy Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h5 class="modal-title fw-bold text-white" id="settingsModalLabel">
+                        <i class="fas fa-cog me-2"></i>Settings & Privacy
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <!-- Settings Navigation Sidebar -->
+                        <div class="col-lg-3 border-end bg-light">
+                            <div class="list-group list-group-flush">
+                                <a href="#profile-settings"
+                                    class="list-group-item list-group-item-action active settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a>
+                                <a href="#career-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-briefcase me-2"></i>Career Preferences
+                                </a>
+                                <a href="#account-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-user-cog me-2"></i>Account
+                                </a>
+                                <a href="#security-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-shield-alt me-2"></i>Security
+                                </a>
+                                <a href="#privacy-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-eye-slash me-2"></i>Privacy
+                                </a>
+                                <a href="#notification-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-bell me-2"></i>Notifications
+                                </a>
+                                <a href="#appearance-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-palette me-2"></i>Appearance
+                                </a>
+                                <a href="#language-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-globe me-2"></i>Language & Region
+                                </a>
+                                <a href="#subscription-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-crown me-2"></i>Subscription
+                                </a>
+                                <a href="#data-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-database me-2"></i>Data & Storage
+                                </a>
+                                <a href="#integration-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-plug me-2"></i>Integrations
+                                </a>
+                                <a href="#help-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-question-circle me-2"></i>Help & Support
+                                </a>
+                                <a href="#advanced-settings"
+                                    class="list-group-item list-group-item-action settings-nav-item"
+                                    data-bs-toggle="pill">
+                                    <i class="fas fa-cogs me-2"></i>Advanced
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Settings Content -->
+                        <div class="col-lg-9">
+                            <div class="tab-content p-4">
+
+                                <!-- Profile Settings -->
+                                <div class="tab-pane fade show active" id="profile-settings">
+                                    <h6 class="fw-bold mb-4">Profile Information</h6>
+
+                                    <!-- Profile Picture Section -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-3 text-center">
+                                            <div class="profile-picture-container mb-3">
+                                                <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center position-relative"
+                                                    style="width: 120px; height: 120px;" id="profilePreview">
+                                                    <i class="fas fa-user fa-3x text-muted"></i>
+                                                    <div class="position-absolute bottom-0 end-0">
+                                                        <button class="btn btn-sm btn-primary rounded-circle"
+                                                            onclick="document.getElementById('profilePictureInput').click()">
+                                                            <i class="fas fa-camera"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <input type="file" class="d-none" id="profilePictureInput"
+                                                    accept="image/*">
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="removeProfilePicture()">
+                                                <i class="fas fa-trash me-1"></i>Remove Photo
+                                            </button>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="first_name" class="form-label">First Name</label>
+                                                    <input type="text" class="form-control" id="first_name"
+                                                        name="first_name" value="John" required>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="last_name" class="form-label">Last Name</label>
+                                                    <input type="text" class="form-control" id="last_name"
+                                                        name="last_name" value="Doe" required>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    value="john.doe@example.com" required>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="phone" class="form-label">Phone Number</label>
+                                                    <input type="tel" class="form-control" id="phone" name="phone"
+                                                        value="+1 (555) 123-4567">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="location" class="form-label">Location</label>
+                                                    <input type="text" class="form-control" id="location"
+                                                        name="location" value="New York, NY"
+                                                        placeholder="City, State/Country">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Professional Information -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Professional Information</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="current_title" class="form-label">Current Job
+                                                        Title</label>
+                                                    <input type="text" class="form-control" id="current_title"
+                                                        name="current_title" placeholder="e.g., Software Engineer">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="current_company" class="form-label">Current
+                                                        Company</label>
+                                                    <input type="text" class="form-control" id="current_company"
+                                                        name="current_company" placeholder="e.g., Tech Corp">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="experience_level" class="form-label">Experience
+                                                        Level</label>
+                                                    <select class="form-select" id="experience_level">
+                                                        <option value="">Select Experience Level</option>
+                                                        <option value="entry">Entry Level (0-2 years)</option>
+                                                        <option value="mid">Mid Level (3-5 years)</option>
+                                                        <option value="senior">Senior Level (6-10 years)</option>
+                                                        <option value="lead">Lead/Principal (10+ years)</option>
+                                                        <option value="executive">Executive</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="industry" class="form-label">Industry</label>
+                                                    <select class="form-select" id="industry">
+                                                        <option value="">Select Industry</option>
+                                                        <option value="technology">Technology</option>
+                                                        <option value="finance">Finance</option>
+                                                        <option value="healthcare">Healthcare</option>
+                                                        <option value="education">Education</option>
+                                                        <option value="retail">Retail</option>
+                                                        <option value="consulting">Consulting</option>
+                                                        <option value="other">Other</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="bio" class="form-label">Professional Bio</label>
+                                                <textarea class="form-control" id="bio" name="bio" rows="4"
+                                                    placeholder="Tell us about your professional background..."></textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                                                    <input type="url" class="form-control" id="linkedin" name="linkedin"
+                                                        placeholder="https://linkedin.com/in/username">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="portfolio" class="form-label">Portfolio/Website</label>
+                                                    <input type="url" class="form-control" id="portfolio"
+                                                        name="portfolio" placeholder="https://yourportfolio.com">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Skills & Expertise -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Skills & Expertise</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="skills" class="form-label">Skills</label>
+                                                <input type="text" class="form-control" id="skills"
+                                                    placeholder="Add skills (comma separated)">
+                                                <div class="form-text">e.g., JavaScript, Project Management, Data
+                                                    Analysis</div>
+                                            </div>
+                                            <div class="skills-container mt-3">
+                                                <span class="badge bg-primary me-2 mb-2">JavaScript <i
+                                                        class="fas fa-times ms-1"></i></span>
+                                                <span class="badge bg-primary me-2 mb-2">Python <i
+                                                        class="fas fa-times ms-1"></i></span>
+                                                <span class="badge bg-primary me-2 mb-2">Project Management <i
+                                                        class="fas fa-times ms-1"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Career Preferences -->
+                                <div class="tab-pane fade" id="career-settings">
+                                    <h6 class="fw-bold mb-4">Career Preferences</h6>
+
+                                    <!-- Job Search Settings -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Job Search Preferences</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="job_search_active"
+                                                    checked>
+                                                <label class="form-check-label" for="job_search_active">
+                                                    <strong>I'm actively looking for opportunities</strong>
+                                                </label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="desired_roles" class="form-label">Desired Job
+                                                        Roles</label>
+                                                    <input type="text" class="form-control" id="desired_roles"
+                                                        placeholder="e.g., Software Engineer, Product Manager">
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="preferred_locations" class="form-label">Preferred
+                                                        Locations</label>
+                                                    <input type="text" class="form-control" id="preferred_locations"
+                                                        placeholder="e.g., Remote, New York, San Francisco">
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="salary_range" class="form-label">Expected Salary
+                                                        Range</label>
+                                                    <select class="form-select" id="salary_range">
+                                                        <option value="">Select Range</option>
+                                                        <option value="40k-60k">$40,000 - $60,000</option>
+                                                        <option value="60k-80k">$60,000 - $80,000</option>
+                                                        <option value="80k-100k">$80,000 - $100,000</option>
+                                                        <option value="100k-120k">$100,000 - $120,000</option>
+                                                        <option value="120k+">$120,000+</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="work_type" class="form-label">Work Type
+                                                        Preference</label>
+                                                    <select class="form-select" id="work_type">
+                                                        <option value="">Select Work Type</option>
+                                                        <option value="remote">Remote</option>
+                                                        <option value="hybrid">Hybrid</option>
+                                                        <option value="onsite">On-site</option>
+                                                        <option value="flexible">Flexible</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Career Goals -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Career Goals</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="career_goal" class="form-label">Primary Career Goal</label>
+                                                <select class="form-select" id="career_goal">
+                                                    <option value="">Select Primary Goal</option>
+                                                    <option value="find_job">Find a new job</option>
+                                                    <option value="career_change">Change career path</option>
+                                                    <option value="skill_development">Develop new skills</option>
+                                                    <option value="promotion">Get promoted</option>
+                                                    <option value="networking">Build professional network</option>
+                                                    <option value="entrepreneurship">Start own business</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="career_timeline" class="form-label">Timeline to Achieve
+                                                    Goal</label>
+                                                <select class="form-select" id="career_timeline">
+                                                    <option value="">Select Timeline</option>
+                                                    <option value="immediate">Immediately (0-3 months)</option>
+                                                    <option value="short_term">Short term (3-6 months)</option>
+                                                    <option value="medium_term">Medium term (6-12 months)</option>
+                                                    <option value="long_term">Long term (1+ years)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="career_interests" class="form-label">Career
+                                                    Interests</label>
+                                                <textarea class="form-control" id="career_interests" rows="3"
+                                                    placeholder="Describe your career interests and aspirations..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Profile Visibility for Recruiters -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Recruiter Visibility</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="recruiter_visibility" checked>
+                                                <label class="form-check-label" for="recruiter_visibility">
+                                                    <strong>Allow recruiters to find my profile</strong>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="job_recommendations">
+                                                <label class="form-check-label" for="job_recommendations">
+                                                    Receive personalized job recommendations
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="salary_insights">
+                                                <label class="form-check-label" for="salary_insights">
+                                                    Show salary insights based on my profile
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Account Settings -->
+                                <div class="tab-pane fade" id="account-settings">
+                                    <h6 class="fw-bold mb-4">Account Settings</h6>
+
+                                    <!-- Account Status -->
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <h6 class="mb-1">Account Status</h6>
+                                                    <p class="text-muted small mb-0">Your account is active and verified
+                                                    </p>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="badge bg-success">Active</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email Verification -->
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <h6 class="mb-1">Email Verification</h6>
+                                                    <p class="text-muted small mb-0">john.doe@example.com</p>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="badge bg-success">Verified</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Account Preferences -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Account Preferences</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="profile_searchable"
+                                                    checked>
+                                                <label class="form-check-label" for="profile_searchable">
+                                                    Make my profile searchable
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="activity_status">
+                                                <label class="form-check-label" for="activity_status">
+                                                    Show when I'm online
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="read_receipts"
+                                                    checked>
+                                                <label class="form-check-label" for="read_receipts">
+                                                    Send read receipts for messages
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Danger Zone -->
+                                    <div class="card border-danger">
+                                        <div class="card-body">
+                                            <h6 class="text-danger mb-2">Danger Zone</h6>
+                                            <p class="text-muted small mb-3">Once you delete your account, there is no
+                                                going back. Please be certain.</p>
+                                            <button class="btn btn-outline-danger" data-bs-toggle="modal"
+                                                data-bs-target="#deleteAccountModal">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Security Settings -->
+                                <div class="tab-pane fade" id="security-settings">
+                                    <h6 class="fw-bold mb-4">Security & Authentication</h6>
+
+                                    <!-- Change Password -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Change Password</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="current_password" class="form-label">Current
+                                                    Password</label>
+                                                <input type="password" class="form-control" id="current_password"
+                                                    required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="new_password" class="form-label">New Password</label>
+                                                <input type="password" class="form-control" id="new_password" required>
+                                                <div class="form-text">Password must be at least 8 characters long</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="confirm_password" class="form-label">Confirm New
+                                                    Password</label>
+                                                <input type="password" class="form-control" id="confirm_password"
+                                                    required>
+                                            </div>
+                                            <button type="button" class="btn btn-primary">Update Password</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Two-Factor Authentication -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Two-Factor Authentication</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <p class="mb-2">Add an extra layer of security to your account</p>
+                                                    <p class="text-muted small mb-0">Use an authenticator app to
+                                                        generate verification codes</p>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-success">Enable 2FA</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Login Sessions -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Active Sessions</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">
+                                                    <i class="fas fa-desktop fa-lg text-primary"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-medium">Current Session</div>
+                                                    <div class="text-muted small">Chrome on Windows • Now</div>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-success">Active</span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">
+                                                    <i class="fas fa-mobile-alt fa-lg text-info"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-medium">Mobile App</div>
+                                                    <div class="text-muted small">iPhone • 2 hours ago</div>
+                                                </div>
+                                                <div>
+                                                    <button class="btn btn-sm btn-outline-danger">Sign Out</button>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-sign-out-alt me-1"></i>Sign out all other sessions
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Security Alerts -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Security Alerts</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="login_alerts"
+                                                    checked>
+                                                <label class="form-check-label" for="login_alerts">
+                                                    Email me about suspicious login attempts
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="password_alerts"
+                                                    checked>
+                                                <label class="form-check-label" for="password_alerts">
+                                                    Email me when my password is changed
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="profile_alerts">
+                                                <label class="form-check-label" for="profile_alerts">
+                                                    Email me when my profile is viewed by recruiters
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Privacy Settings -->
+                                <div class="tab-pane fade" id="privacy-settings">
+                                    <h6 class="fw-bold mb-4">Privacy & Visibility</h6>
+
+                                    <!-- Profile Visibility -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Profile Visibility</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Who can see your full profile?</label>
+                                                <select class="form-select">
+                                                    <option value="public">Everyone (Public)</option>
+                                                    <option value="members" selected>CareersBud Members Only</option>
+                                                    <option value="connections">My Connections Only</option>
+                                                    <option value="recruiters">Recruiters Only</option>
+                                                    <option value="private">Only Me</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="show_email" checked>
+                                                <label class="form-check-label" for="show_email">
+                                                    Show email address on profile
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="show_phone">
+                                                <label class="form-check-label" for="show_phone">
+                                                    Show phone number to recruiters
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="show_salary"
+                                                    checked>
+                                                <label class="form-check-label" for="show_salary">
+                                                    Show salary expectations
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="show_location"
+                                                    checked>
+                                                <label class="form-check-label" for="show_location">
+                                                    Show my location
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Data Usage & Sharing -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Data Usage & Sharing</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="analytics_sharing">
+                                                <label class="form-check-label" for="analytics_sharing">
+                                                    <strong>Analytics Data Sharing</strong><br>
+                                                    <small class="text-muted">Help us improve CareersBud by sharing
+                                                        anonymous usage data</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="marketing_data">
+                                                <label class="form-check-label" for="marketing_data">
+                                                    <strong>Marketing Communications</strong><br>
+                                                    <small class="text-muted">Receive personalized job recommendations
+                                                        and career content</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="third_party_sharing">
+                                                <label class="form-check-label" for="third_party_sharing">
+                                                    <strong>Third-Party Data Sharing</strong><br>
+                                                    <small class="text-muted">Allow trusted partners to show relevant
+                                                        opportunities</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="profile_analytics"
+                                                    checked>
+                                                <label class="form-check-label" for="profile_analytics">
+                                                    <strong>Profile Analytics</strong><br>
+                                                    <small class="text-muted">Track who views your profile and career
+                                                        insights</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Preferences -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Contact Preferences</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Who can contact you directly?</label>
+                                                <select class="form-select">
+                                                    <option value="everyone">Everyone</option>
+                                                    <option value="members" selected>CareersBud Members Only</option>
+                                                    <option value="recruiters">Recruiters Only</option>
+                                                    <option value="connections">My Connections Only</option>
+                                                    <option value="no_one">No One</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="recruiter_messages"
+                                                    checked>
+                                                <label class="form-check-label" for="recruiter_messages">
+                                                    Allow recruiters to message me about opportunities
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="networking_requests"
+                                                    checked>
+                                                <label class="form-check-label" for="networking_requests">
+                                                    Allow networking and connection requests
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Notification Settings -->
+                                <div class="tab-pane fade" id="notification-settings">
+                                    <h6 class="fw-bold mb-4">Notification Preferences</h6>
+
+                                    <!-- Email Notifications -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Email Notifications</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_job_alerts" checked>
+                                                        <label class="form-check-label" for="email_job_alerts">
+                                                            Job alerts and new opportunities
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_application_updates" checked>
+                                                        <label class="form-check-label" for="email_application_updates">
+                                                            Application status updates
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_profile_views">
+                                                        <label class="form-check-label" for="email_profile_views">
+                                                            Profile views from recruiters
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_network_updates">
+                                                        <label class="form-check-label" for="email_network_updates">
+                                                            Network activity and updates
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_messages" checked>
+                                                        <label class="form-check-label" for="email_messages">
+                                                            Direct messages and inquiries
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_career_tips">
+                                                        <label class="form-check-label" for="email_career_tips">
+                                                            Career tips and insights
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_weekly_digest">
+                                                        <label class="form-check-label" for="email_weekly_digest">
+                                                            Weekly job market digest
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="email_product_updates">
+                                                        <label class="form-check-label" for="email_product_updates">
+                                                            Product updates and features
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Push Notifications -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Push Notifications</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_messages" checked>
+                                                        <label class="form-check-label" for="push_messages">
+                                                            New messages and inquiries
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_job_matches" checked>
+                                                        <label class="form-check-label" for="push_job_matches">
+                                                            New job matches
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_application_updates">
+                                                        <label class="form-check-label" for="push_application_updates">
+                                                            Application status changes
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_profile_views">
+                                                        <label class="form-check-label" for="push_profile_views">
+                                                            Profile views
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_connection_requests">
+                                                        <label class="form-check-label" for="push_connection_requests">
+                                                            Connection requests
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="push_urgent_opportunities">
+                                                        <label class="form-check-label" for="push_urgent_opportunities">
+                                                            Urgent job opportunities
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Notification Schedule -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Notification Schedule</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="enable_quiet_hours">
+                                                <label class="form-check-label" for="enable_quiet_hours">
+                                                    Enable quiet hours (no notifications during this time)
+                                                </label>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="quiet_start" class="form-label">Start Time</label>
+                                                    <input type="time" class="form-control" id="quiet_start"
+                                                        value="22:00">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="quiet_end" class="form-label">End Time</label>
+                                                    <input type="time" class="form-control" id="quiet_end"
+                                                        value="08:00">
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Notification Frequency</label>
+                                                <select class="form-select">
+                                                    <option value="instant" selected>Instant notifications</option>
+                                                    <option value="hourly">Hourly digest</option>
+                                                    <option value="daily">Daily digest</option>
+                                                    <option value="weekly">Weekly digest</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Appearance Settings -->
+                                <div class="tab-pane fade" id="appearance-settings">
+                                    <h6 class="fw-bold mb-4">Appearance & Display</h6>
+
+                                    <!-- Theme Settings -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Theme</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="card theme-card" data-theme="light">
+                                                        <div class="card-body text-center p-3">
+                                                            <div class="bg-light border rounded p-3 mb-2">
+                                                                <div class="bg-white border rounded p-2 mb-1"></div>
+                                                                <div class="bg-white border rounded p-1"></div>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                    name="theme" id="light_theme" value="light" checked>
+                                                                <label class="form-check-label"
+                                                                    for="light_theme">Light</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="card theme-card" data-theme="dark">
+                                                        <div class="card-body text-center p-3">
+                                                            <div class="bg-dark border rounded p-3 mb-2">
+                                                                <div class="bg-secondary border rounded p-2 mb-1"></div>
+                                                                <div class="bg-secondary border rounded p-1"></div>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                    name="theme" id="dark_theme" value="dark">
+                                                                <label class="form-check-label"
+                                                                    for="dark_theme">Dark</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="card theme-card" data-theme="auto">
+                                                        <div class="card-body text-center p-3">
+                                                            <div class="bg-gradient border rounded p-3 mb-2">
+                                                                <div class="bg-white border rounded p-2 mb-1"
+                                                                    style="width: 50%; display: inline-block;"></div>
+                                                                <div class="bg-dark border rounded p-2 mb-1"
+                                                                    style="width: 50%; display: inline-block;"></div>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio"
+                                                                    name="theme" id="auto_theme" value="auto">
+                                                                <label class="form-check-label"
+                                                                    for="auto_theme">Auto</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Color Scheme -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Accent Color</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-3 mb-2">
+                                                    <div class="color-option text-center" data-color="purple">
+                                                        <input type="radio" name="accent_color" value="purple"
+                                                            id="color_purple" checked>
+                                                        <label for="color_purple" class="color-label"
+                                                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 40px; height: 40px; border-radius: 50%; display: inline-block; border: 3px solid transparent; cursor: pointer;"></label>
+                                                        <br><small>Purple</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-2">
+                                                    <div class="color-option text-center" data-color="blue">
+                                                        <input type="radio" name="accent_color" value="blue"
+                                                            id="color_blue">
+                                                        <label for="color_blue" class="color-label"
+                                                            style="background-color: #0d6efd; width: 40px; height: 40px; border-radius: 50%; display: inline-block; border: 3px solid transparent; cursor: pointer;"></label>
+                                                        <br><small>Blue</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-2">
+                                                    <div class="color-option text-center" data-color="green">
+                                                        <input type="radio" name="accent_color" value="green"
+                                                            id="color_green">
+                                                        <label for="color_green" class="color-label"
+                                                            style="background-color: #198754; width: 40px; height: 40px; border-radius: 50%; display: inline-block; border: 3px solid transparent; cursor: pointer;"></label>
+                                                        <br><small>Green</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-2">
+                                                    <div class="color-option text-center" data-color="orange">
+                                                        <input type="radio" name="accent_color" value="orange"
+                                                            id="color_orange">
+                                                        <label for="color_orange" class="color-label"
+                                                            style="background-color: #fd7e14; width: 40px; height: 40px; border-radius: 50%; display: inline-block; border: 3px solid transparent; cursor: pointer;"></label>
+                                                        <br><small>Orange</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Display Settings -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Display Settings</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="font_size" class="form-label">Font Size</label>
+                                                    <select class="form-select" id="font_size">
+                                                        <option value="small">Small</option>
+                                                        <option value="medium" selected>Medium</option>
+                                                        <option value="large">Large</option>
+                                                        <option value="xl">Extra Large</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="sidebar_behavior" class="form-label">Sidebar
+                                                        Behavior</label>
+                                                    <select class="form-select" id="sidebar_behavior">
+                                                        <option value="auto">Auto-collapse on mobile</option>
+                                                        <option value="always_open" selected>Always open</option>
+                                                        <option value="always_collapsed">Always collapsed</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="reduced_motion">
+                                                <label class="form-check-label" for="reduced_motion">
+                                                    Reduce motion and animations
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="compact_view">
+                                                <label class="form-check-label" for="compact_view">
+                                                    Use compact view for job listings
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="auto_refresh"
+                                                    checked>
+                                                <label class="form-check-label" for="auto_refresh">
+                                                    Auto-refresh job recommendations
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Language & Region Settings -->
+                                <div class="tab-pane fade" id="language-settings">
+                                    <h6 class="fw-bold mb-4">Language & Region</h6>
+
+                                    <!-- Language Settings -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Language Preferences</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="display_language" class="form-label">Display
+                                                    Language</label>
+                                                <select class="form-select" id="display_language">
+                                                    <option value="en" selected>English</option>
+                                                    <option value="es">Español</option>
+                                                    <option value="fr">Français</option>
+                                                    <option value="de">Deutsch</option>
+                                                    <option value="zh">中文</option>
+                                                    <option value="ja">日本語</option>
+                                                    <option value="ko">한국어</option>
+                                                    <option value="pt">Português</option>
+                                                    <option value="it">Italiano</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="job_language" class="form-label">Preferred Job Listing
+                                                    Language</label>
+                                                <select class="form-select" id="job_language" multiple size="4">
+                                                    <option value="en" selected>English</option>
+                                                    <option value="es">Spanish</option>
+                                                    <option value="fr">French</option>
+                                                    <option value="de">German</option>
+                                                    <option value="zh">Chinese</option>
+                                                </select>
+                                                <div class="form-text">Hold Ctrl/Cmd to select multiple languages</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Regional Settings -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Regional Settings</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="timezone" class="form-label">Timezone</label>
+                                                    <select class="form-select" id="timezone">
+                                                        <option value="UTC-12">(UTC-12:00) International Date Line West
+                                                        </option>
+                                                        <option value="UTC-8">(UTC-08:00) Pacific Time (US & Canada)
+                                                        </option>
+                                                        <option value="UTC-5" selected>(UTC-05:00) Eastern Time (US &
+                                                            Canada)</option>
+                                                        <option value="UTC+0">(UTC+00:00) Greenwich Mean Time</option>
+                                                        <option value="UTC+1">(UTC+01:00) Central European Time</option>
+                                                        <option value="UTC+8">(UTC+08:00) Beijing, Singapore</option>
+                                                        <option value="UTC+9">(UTC+09:00) Tokyo, Seoul</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="currency" class="form-label">Currency</label>
+                                                    <select class="form-select" id="currency">
+                                                        <option value="USD" selected>USD - US Dollar</option>
+                                                        <option value="EUR">EUR - Euro</option>
+                                                        <option value="GBP">GBP - British Pound</option>
+                                                        <option value="CAD">CAD - Canadian Dollar</option>
+                                                        <option value="AUD">AUD - Australian Dollar</option>
+                                                        <option value="JPY">JPY - Japanese Yen</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="date_format" class="form-label">Date Format</label>
+                                                    <select class="form-select" id="date_format">
+                                                        <option value="MM/DD/YYYY" selected>MM/DD/YYYY (US)</option>
+                                                        <option value="DD/MM/YYYY">DD/MM/YYYY (UK)</option>
+                                                        <option value="YYYY-MM-DD">YYYY-MM-DD (ISO)</option>
+                                                        <option value="DD.MM.YYYY">DD.MM.YYYY (German)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="time_format" class="form-label">Time Format</label>
+                                                    <select class="form-select" id="time_format">
+                                                        <option value="12" selected>12-hour (AM/PM)</option>
+                                                        <option value="24">24-hour</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Subscription Settings -->
+                                <div class="tab-pane fade" id="subscription-settings">
+                                    <h6 class="fw-bold mb-4">Subscription & Billing</h6>
+
+                                    <!-- Current Plan -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Current Plan</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <h5 class="mb-1">
+                                                        <i class="fas fa-crown text-warning me-2"></i>Premium Plan
+                                                    </h5>
+                                                    <p class="text-muted mb-0">
+                                                        Access to all premium features and priority support
+                                                        <br><small>Renews on January 15, 2025</small>
+                                                    </p>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-outline-warning">Manage Plan</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Payment Method -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Payment Method</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="me-3">
+                                                    <i class="fab fa-cc-visa fa-2x text-primary"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-medium">•••• •••• •••• 1234</div>
+                                                    <div class="text-muted small">Expires 12/26</div>
+                                                </div>
+                                                <div>
+                                                    <button class="btn btn-sm btn-outline-primary">Update</button>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-plus me-1"></i>Add New Payment Method
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Billing History -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Billing History</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Description</th>
+                                                            <th>Amount</th>
+                                                            <th>Status</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Dec 15, 2024</td>
+                                                            <td>Premium Monthly Subscription</td>
+                                                            <td>$19.99</td>
+                                                            <td><span class="badge bg-success">Paid</span></td>
+                                                            <td><button
+                                                                    class="btn btn-sm btn-outline-primary">Invoice</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Nov 15, 2024</td>
+                                                            <td>Premium Monthly Subscription</td>
+                                                            <td>$19.99</td>
+                                                            <td><span class="badge bg-success">Paid</span></td>
+                                                            <td><button
+                                                                    class="btn btn-sm btn-outline-primary">Invoice</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Subscription Management -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Subscription Management</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="auto_renew" checked>
+                                                <label class="form-check-label" for="auto_renew">
+                                                    Auto-renew subscription
+                                                </label>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-outline-info">Change Plan</button>
+                                                <button class="btn btn-outline-danger">Cancel Subscription</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Data & Storage Settings -->
+                                <div class="tab-pane fade" id="data-settings">
+                                    <h6 class="fw-bold mb-4">Data Management & Storage</h6>
+
+                                    <!-- Storage Usage -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Storage Usage</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <span>Used Storage</span>
+                                                    <span>1.8 GB of 5 GB</span>
+                                                </div>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width: 36%">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center">
+                                                <div class="col-4">
+                                                    <div class="fw-bold">900 MB</div>
+                                                    <div class="small text-muted">Resume Files</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="fw-bold">600 MB</div>
+                                                    <div class="small text-muted">Cover Letters</div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="fw-bold">300 MB</div>
+                                                    <div class="small text-muted">Portfolio</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Data Export -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Data Export</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-3">Export your personal data including profile information, job
+                                                applications, and career history.</p>
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-download me-2"></i>Request Data Export
+                                            </button>
+                                            <div class="mt-2">
+                                                <small class="text-muted">You'll receive an email with download links
+                                                    within 24 hours.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cache & Offline Data -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Cache & Offline Data</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <div class="fw-medium">Browser Cache</div>
+                                                    <div class="text-muted small">Temporary files and images (250 MB)
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-danger">Clear Cache</button>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <div>
+                                                    <div class="fw-medium">Saved Job Searches</div>
+                                                    <div class="text-muted small">Offline job search data (150 MB)</div>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-warning">Manage Saves</button>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="auto_save_searches"
+                                                    checked>
+                                                <label class="form-check-label" for="auto_save_searches">
+                                                    Automatically save job searches for offline viewing
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Data Retention -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Data Retention</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="activity_retention" class="form-label">Keep activity history
+                                                    for</label>
+                                                <select class="form-select" id="activity_retention">
+                                                    <option value="30">30 days</option>
+                                                    <option value="90" selected>90 days</option>
+                                                    <option value="180">6 months</option>
+                                                    <option value="365">1 year</option>
+                                                    <option value="forever">Forever</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="search_retention" class="form-label">Keep job search history
+                                                    for</label>
+                                                <select class="form-select" id="search_retention">
+                                                    <option value="30">30 days</option>
+                                                    <option value="90">90 days</option>
+                                                    <option value="180" selected>6 months</option>
+                                                    <option value="365">1 year</option>
+                                                    <option value="forever">Forever</option>
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash me-2"></i>Clear All Activity History
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Integration Settings -->
+                                <div class="tab-pane fade" id="integration-settings">
+                                    <h6 class="fw-bold mb-4">Third-Party Integrations</h6>
+
+                                    <!-- Connected Accounts -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Connected Accounts</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- LinkedIn -->
+                                            <div
+                                                class="d-flex align-items-center justify-content-between mb-3 p-3 border rounded">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fab fa-linkedin fa-2x text-primary me-3"></i>
+                                                    <div>
+                                                        <div class="fw-medium">LinkedIn</div>
+                                                        <div class="text-muted small">Profile sync, job imports</div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-outline-danger btn-sm">Disconnect</button>
+                                            </div>
+
+                                            <!-- GitHub -->
+                                            <div
+                                                class="d-flex align-items-center justify-content-between mb-3 p-3 border rounded">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fab fa-github fa-2x text-dark me-3"></i>
+                                                    <div>
+                                                        <div class="fw-medium">GitHub</div>
+                                                        <div class="text-muted small">Portfolio sync, project showcase
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-outline-primary btn-sm">Connect</button>
+                                            </div>
+
+                                            <!-- Indeed -->
+                                            <div
+                                                class="d-flex align-items-center justify-content-between mb-3 p-3 border rounded">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-briefcase fa-2x text-info me-3"></i>
+                                                    <div>
+                                                        <div class="fw-medium">Indeed</div>
+                                                        <div class="text-muted small">Job applications, resume sync
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-outline-primary btn-sm">Connect</button>
+                                            </div>
+
+                                            <!-- Google Drive -->
+                                            <div
+                                                class="d-flex align-items-center justify-content-between p-3 border rounded">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fab fa-google-drive fa-2x text-success me-3"></i>
+                                                    <div>
+                                                        <div class="fw-medium">Google Drive</div>
+                                                        <div class="text-muted small">Resume storage, document backup
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-outline-primary btn-sm">Connect</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- API Access -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">API Access</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-3">Generate API keys to integrate CareersBud with external
+                                                applications.</p>
+                                            <div class="mb-3">
+                                                <label for="api_key" class="form-label">Your API Key</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" id="api_key"
+                                                        value="cb-1234567890abcdef" readonly>
+                                                    <button class="btn btn-outline-secondary" type="button"
+                                                        onclick="toggleApiKey()">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-primary" type="button">Copy</button>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-outline-warning">Regenerate Key</button>
+                                                <button class="btn btn-outline-info">View Documentation</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Webhooks -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Webhooks</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-3">Configure webhooks to receive notifications about your
+                                                account activity.</p>
+                                            <div class="mb-3">
+                                                <label for="webhook_url" class="form-label">Webhook URL</label>
+                                                <input type="url" class="form-control" id="webhook_url"
+                                                    placeholder="https://your-app.com/webhooks/careersbud">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Events</label>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="webhook_applications">
+                                                    <label class="form-check-label" for="webhook_applications">Job
+                                                        applications</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="webhook_responses">
+                                                    <label class="form-check-label" for="webhook_responses">Application
+                                                        responses</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="webhook_matches">
+                                                    <label class="form-check-label" for="webhook_matches">New job
+                                                        matches</label>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary">Save Webhook</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Help & Support Settings -->
+                                <div class="tab-pane fade" id="help-settings">
+                                    <h6 class="fw-bold mb-4">Help & Support</h6>
+
+                                    <!-- Support Channels -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Get Help</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body text-center">
+                                                            <i
+                                                                class="fas fa-question-circle fa-2x text-primary mb-2"></i>
+                                                            <h6>Help Center</h6>
+                                                            <p class="small text-muted">Browse articles and career
+                                                                guides</p>
+                                                            <button class="btn btn-sm btn-outline-primary">Visit Help
+                                                                Center</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body text-center">
+                                                            <i class="fas fa-comments fa-2x text-success mb-2"></i>
+                                                            <h6>Live Chat</h6>
+                                                            <p class="small text-muted">Chat with our career advisors
+                                                            </p>
+                                                            <button class="btn btn-sm btn-outline-success">Start
+                                                                Chat</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body text-center">
+                                                            <i class="fas fa-envelope fa-2x text-info mb-2"></i>
+                                                            <h6>Email Support</h6>
+                                                            <p class="small text-muted">Send us a detailed message</p>
+                                                            <button class="btn btn-sm btn-outline-info">Contact
+                                                                Support</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card h-100 border-0 bg-light">
+                                                        <div class="card-body text-center">
+                                                            <i class="fas fa-users fa-2x text-warning mb-2"></i>
+                                                            <h6>Community Forum</h6>
+                                                            <p class="small text-muted">Connect with other job seekers
+                                                            </p>
+                                                            <button class="btn btn-sm btn-outline-warning">Join
+                                                                Forum</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Feedback -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Send Feedback</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="feedback_type" class="form-label">Feedback Type</label>
+                                                <select class="form-select" id="feedback_type">
+                                                    <option value="bug">Bug Report</option>
+                                                    <option value="feature">Feature Request</option>
+                                                    <option value="improvement">Improvement Suggestion</option>
+                                                    <option value="career_advice">Career Advice Request</option>
+                                                    <option value="general">General Feedback</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="feedback_message" class="form-label">Message</label>
+                                                <textarea class="form-control" id="feedback_message" rows="4"
+                                                    placeholder="Tell us what you think..."></textarea>
+                                            </div>
+                                            <button type="button" class="btn btn-primary">
+                                                <i class="fas fa-paper-plane me-2"></i>Send Feedback
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- System Information -->
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">System Information</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-2"><strong>App Version:</strong> 3.2.1</div>
+                                                    <div class="mb-2"><strong>Browser:</strong> <span
+                                                            id="browser-info">Chrome 120.0</span></div>
+                                                    <div class="mb-2"><strong>OS:</strong> <span id="os-info">Windows
+                                                            11</span></div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-2"><strong>Account ID:</strong> CB123456789</div>
+                                                    <div class="mb-2"><strong>Last Login:</strong> <span
+                                                            id="last-login">Dec 16, 2024</span></div>
+                                                    <div class="mb-2"><strong>Status:</strong> <span
+                                                            class="badge bg-success">Online</span></div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-outline-secondary btn-sm mt-2">
+                                                <i class="fas fa-copy me-1"></i>Copy System Info
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Advanced Settings -->
+                                <div class="tab-pane fade" id="advanced-settings">
+                                    <h6 class="fw-bold mb-4">Advanced Settings</h6>
+
+                                    <!-- Developer Mode -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Developer Options</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="developer_mode">
+                                                <label class="form-check-label" for="developer_mode">
+                                                    <strong>Enable Developer Mode</strong><br>
+                                                    <small class="text-muted">Access advanced debugging tools and
+                                                        experimental features</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="console_logs">
+                                                <label class="form-check-label" for="console_logs">
+                                                    Show console logs in browser
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="beta_features">
+                                                <label class="form-check-label" for="beta_features">
+                                                    Enable beta features (may be unstable)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Performance Settings -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Performance Settings</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="job_load_speed" class="form-label">Job Loading Speed</label>
+                                                <select class="form-select" id="job_load_speed">
+                                                    <option value="fast" selected>Fast (Less details)</option>
+                                                    <option value="balanced">Balanced</option>
+                                                    <option value="detailed">Detailed (Slower loading)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="search_results" class="form-label">Search Results Per
+                                                    Page</label>
+                                                <select class="form-select" id="search_results">
+                                                    <option value="10">10 results</option>
+                                                    <option value="25" selected>25 results</option>
+                                                    <option value="50">50 results</option>
+                                                    <option value="100">100 results</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="preload_content"
+                                                    checked>
+                                                <label class="form-check-label" for="preload_content">
+                                                    Preload job content for faster browsing
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Experimental Features -->
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Experimental Features</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                <strong>Warning:</strong> Experimental features may be unstable and
+                                                could affect your experience.
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="ai_resume_builder">
+                                                <label class="form-check-label" for="ai_resume_builder">
+                                                    <strong>AI Resume Builder</strong><br>
+                                                    <small class="text-muted">Get AI-powered resume suggestions and
+                                                        optimization</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="smart_job_matching">
+                                                <label class="form-check-label" for="smart_job_matching">
+                                                    <strong>Smart Job Matching</strong><br>
+                                                    <small class="text-muted">Advanced AI-powered job
+                                                        recommendations</small>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="interview_simulator">
+                                                <label class="form-check-label" for="interview_simulator">
+                                                    <strong>Interview Simulator</strong><br>
+                                                    <small class="text-muted">Practice interviews with AI
+                                                        feedback</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Reset Settings -->
+                                    <div class="card border-warning">
+                                        <div class="card-header bg-warning bg-opacity-10">
+                                            <h6 class="mb-0 text-warning">Reset Settings</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-3">Reset all settings to their default values. This action
+                                                cannot be undone.</p>
+                                            <button class="btn btn-outline-warning" data-bs-toggle="modal"
+                                                data-bs-target="#resetSettingsModal">
+                                                <i class="fas fa-undo me-2"></i>Reset All Settings
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAllSettings()">
+                        <i class="fas fa-save me-2"></i>Save All Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-danger">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteAccountModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong>Warning:</strong> This action is permanent and cannot be undone!
+                    </div>
+                    <p>Deleting your account will:</p>
+                    <ul>
+                        <li>Permanently delete your profile and all personal data</li>
+                        <li>Remove all job applications and saved searches</li>
+                        <li>Delete your resume and portfolio files</li>
+                        <li>Cancel any active subscriptions</li>
+                        <li>Remove you from recruiter databases</li>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="delete_confirmation" class="form-label">Type "DELETE" to confirm:</label>
+                        <input type="text" class="form-control" id="delete_confirmation" placeholder="DELETE">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" disabled>
+                        <i class="fas fa-trash me-2"></i>Delete My Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Settings Confirmation Modal -->
+    <div class="modal fade" id="resetSettingsModal" tabindex="-1" aria-labelledby="resetSettingsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-warning">
+                <div class="modal-header bg-warning bg-opacity-10">
+                    <h5 class="modal-title text-warning" id="resetSettingsModalLabel">
+                        <i class="fas fa-undo me-2"></i>Reset All Settings
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to reset all settings to their default values? This will affect:</p>
+                    <ul>
+                        <li>Appearance and theme preferences</li>
+                        <li>Notification settings</li>
+                        <li>Language and regional preferences</li>
+                        <li>Career and privacy settings</li>
+                        <li>Integration connections</li>
+                    </ul>
+                    <p class="text-warning"><strong>Note:</strong> Your profile information and job data will not be
+                        affected.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" onclick="resetAllSettings()">
+                        <i class="fas fa-undo me-2"></i>Reset Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this to your sidebar navigation in base.html -->
+    <!-- 
+<a href="#" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#settingsModal">
+    <i class="fas fa-cog me-2"></i>Settings & Privacy
+</a>
+-->
+
+    <!-- CSS Styles -->
+    <style>
+        .settings-nav-item {
+            border: none !important;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+            border-radius: 0;
+        }
+
+        .settings-nav-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .settings-nav-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .settings-nav-item.active:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .theme-card {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-card.selected {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+        }
+
+        .color-option {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .color-option input[type="radio"] {
+            display: none;
+        }
+
+        .color-option input[type="radio"]:checked+.color-label {
+            border-color: #333 !important;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+        }
+
+        .profile-picture-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-picture-container:hover::after {
+            content: '\f030';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.5rem;
+        }
+
+        .skills-container .badge {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .skills-container .badge:hover {
+            background-color: #dc3545 !important;
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            transform: translateY(-1px);
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .card-header {
+            background-color: #f8f9ff;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .modal-xl {
+                margin: 0;
+                max-width: 100%;
+                height: 100vh;
+            }
+
+            .modal-xl .modal-content {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-xl .modal-body {
+                flex: 1;
+                overflow-y: auto;
+            }
+
+            .settings-nav-item {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            .bg-light {
+                background-color: #2a2a2a !important;
+            }
+
+            .border {
+                border-color: #444 !important;
+            }
+
+            .text-muted {
+                color: #999 !important;
+            }
+
+            .card {
+                background-color: #1a1a1a;
+                color: white;
+            }
+
+            .card-header {
+                background-color: #2a2a2a;
+            }
+        }
+
+        /* Toast notifications */
+        .toast {
+            border-radius: 10px;
+        }
+
+        /* Loading states */
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading .spinner-border {
+            width: 1rem;
+            height: 1rem;
+        }
+
+
+
+        /* CSS Override Extension for Separate Scrolling Areas */
+
+/* Override modal body to remove single scroll */
+#settingsModal .modal-body {
+    padding: 0 !important;
+    height: 70vh !important;
+    overflow: hidden !important;
+}
+
+/* Override row to take full height */
+#settingsModal .modal-body .row.g-0 {
+    height: 100% !important;
+}
+
+/* Override sidebar column for separate scroll */
+#settingsModal .col-lg-3.border-end.bg-light {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Override content column for separate scroll */
+#settingsModal .col-lg-9 {
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Override tab-content to remove previous scroll settings */
+#settingsModal .tab-content {
+    padding: 1.5rem !important;
+    height: 100% !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+/* Custom scrollbar styling for better UX */
+#settingsModal .col-lg-3::-webkit-scrollbar,
+#settingsModal .col-lg-9::-webkit-scrollbar {
+    width: 6px;
+}
+
+#settingsModal .col-lg-3::-webkit-scrollbar-track,
+#settingsModal .col-lg-9::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#settingsModal .col-lg-3::-webkit-scrollbar-thumb,
+#settingsModal .col-lg-9::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+#settingsModal .col-lg-3::-webkit-scrollbar-thumb:hover,
+#settingsModal .col-lg-9::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive override for mobile */
+@media (max-width: 768px) {
+    #settingsModal .modal-body {
+        height: 100vh !important;
+    }
+    
+    #settingsModal .col-lg-3,
+    #settingsModal .col-lg-9 {
+        height: auto !important;
+        max-height: 50vh !important;
+    }
+}
+    </style>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize settings modal
+            initializeSettingsModal();
+
+            // Profile picture handling
+            const profilePictureInput = document.getElementById('profilePictureInput');
+            const profilePreview = document.getElementById('profilePreview');
+
+            if (profilePictureInput) {
+                profilePictureInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            profilePreview.innerHTML = `<img src="${e.target.result}" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" alt="Profile Preview">`;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            // Theme selection
+            const themeCards = document.querySelectorAll('.theme-card');
+            themeCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+
+                    // Remove selected class from all cards
+                    themeCards.forEach(c => c.classList.remove('selected'));
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+
+                    // Apply theme immediately
+                    applyTheme(radio.value);
+                });
+            });
+
+            // Color scheme selection
+            const colorOptions = document.querySelectorAll('.color-option');
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+
+                    // Apply color scheme immediately
+                    applyColorScheme(radio.value);
+                });
+            });
+
+            // Skills management
+            initializeSkillsManagement();
+
+            // Delete account confirmation
+            const deleteConfirmationInput = document.getElementById('delete_confirmation');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+            if (deleteConfirmationInput && confirmDeleteBtn) {
+                deleteConfirmationInput.addEventListener('input', function () {
+                    confirmDeleteBtn.disabled = this.value !== 'DELETE';
+                });
+
+                confirmDeleteBtn.addEventListener('click', function () {
+                    if (deleteConfirmationInput.value === 'DELETE') {
+                        if (confirm('Are you absolutely sure? This cannot be undone!')) {
+                            // Simulate account deletion
+                            showToast('Account deletion initiated. You will be redirected shortly.', 'warning');
+                            setTimeout(() => {
+                                window.location.href = '/login';
+                            }, 3000);
+                        }
+                    }
+                });
+            }
+
+            // Auto-save settings on change
+            const settingsInputs = document.querySelectorAll('#settingsModal input, #settingsModal select, #settingsModal textarea');
+            settingsInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    autoSaveSettings(this);
+                });
+            });
+
+            // API key toggle
+            window.toggleApiKey = function () {
+                const apiKeyInput = document.getElementById('api_key');
+                const toggleBtn = apiKeyInput.nextElementSibling;
+
+                if (apiKeyInput.type === 'password') {
+                    apiKeyInput.type = 'text';
+                    toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    apiKeyInput.type = 'password';
+                    toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            };
+
+            // System info detection
+            detectSystemInfo();
+        });
+
+        function initializeSettingsModal() {
+            // Load saved settings from localStorage
+            const savedTheme = localStorage.getItem('careersbud_theme') || 'light';
+            const savedColor = localStorage.getItem('careersbud_accent_color') || 'purple';
+
+            // Apply saved settings
+            applyTheme(savedTheme);
+            applyColorScheme(savedColor);
+
+            // Set form values
+            document.querySelector(`input[name="theme"][value="${savedTheme}"]`).checked = true;
+            document.querySelector(`input[name="accent_color"][value="${savedColor}"]`).checked = true;
+        }
+
+        function initializeSkillsManagement() {
+            const skillsInput = document.getElementById('skills');
+            const skillsContainer = document.querySelector('.skills-container');
+
+            if (skillsInput) {
+                skillsInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const skills = this.value.split(',').map(s => s.trim()).filter(s => s);
+
+                        skills.forEach(skill => {
+                            if (skill) {
+                                addSkillBadge(skill, skillsContainer);
+                            }
+                        });
+
+                        this.value = '';
+                    }
+                });
+            }
+
+            // Handle skill removal
+            skillsContainer.addEventListener('click', function (e) {
+                if (e.target.classList.contains('fa-times')) {
+                    e.target.closest('.badge').remove();
+                }
+            });
+        }
+
+        function addSkillBadge(skill, container) {
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-primary me-2 mb-2';
+            badge.innerHTML = `${skill} <i class="fas fa-times ms-1"></i>`;
+            container.appendChild(badge);
+        }
+
+        function removeProfilePicture() {
+            const profilePreview = document.getElementById('profilePreview');
+            profilePreview.innerHTML = '<i class="fas fa-user fa-3x text-muted"></i>';
+            document.getElementById('profilePictureInput').value = '';
+        }
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('careersbud_theme', theme);
+
+            // Apply theme-specific styles
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else if (theme === 'light') {
+                document.body.classList.remove('dark-theme');
+            } else {
+                // Auto theme - check system preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.classList.add('dark-theme');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                }
+            }
+        }
+
+        function applyColorScheme(color) {
+            const colors = {
+                'purple': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                'blue': '#0d6efd',
+                'green': '#198754',
+                'orange': '#fd7e14'
+            };
+
+            document.documentElement.style.setProperty('--bs-primary', colors[color] || colors.purple);
+            localStorage.setItem('careersbud_accent_color', color);
+        }
+
+        function autoSaveSettings(input) {
+            // Show saving indicator
+            showSavingIndicator();
+
+            // Save to localStorage
+            const key = `careersbud_${input.name || input.id}`;
+            const value = input.type === 'checkbox' ? input.checked : input.value;
+            localStorage.setItem(key, value);
+
+            // Simulate API call
+            setTimeout(() => {
+                showToast('Setting saved automatically', 'success');
+            }, 500);
+        }
+
+        function saveAllSettings() {
+            const saveBtn = document.querySelector('#settingsModal .btn-primary');
+            const originalText = saveBtn.innerHTML;
+
+            // Show loading state
+            saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+            saveBtn.disabled = true;
+
+            // Collect all form data
+            const formData = new FormData();
+            const settingsInputs = document.querySelectorAll('#settingsModal input, #settingsModal select, #settingsModal textarea');
+
+            settingsInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    formData.append(input.name || input.id, input.checked);
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        formData.append(input.name, input.value);
+                    }
+                } else if (input.type !== 'file') {
+                    formData.append(input.name || input.id, input.value);
+                }
+            });
+
+            // Simulate API call
+            setTimeout(() => {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+                showToast('All settings saved successfully!', 'success');
+
+                // Close modal after successful save
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                    modal.hide();
+                }, 1000);
+            }, 2000);
+        }
+
+        function resetAllSettings() {
+            // Clear localStorage
+            Object.keys(localStorage).forEach(key => {
+                if (key.startsWith('careersbud_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            // Reset form values
+            const settingsForm = document.getElementById('settingsModal');
+            const inputs = settingsForm.querySelectorAll('input, select, textarea');
+
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = input.defaultChecked;
+                } else {
+                    input.value = input.defaultValue;
+                }
+            });
+
+            // Apply default theme and colors
+            applyTheme('light');
+            applyColorScheme('purple');
+
+            showToast('Settings reset to defaults', 'info');
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('resetSettingsModal'));
+            modal.hide();
+        }
+
+        function showSavingIndicator() {
+            // Create a small saving indicator
+            const indicator = document.createElement('div');
+            indicator.className = 'position-fixed top-0 end-0 m-3';
+            indicator.innerHTML = '<div class="alert alert-info alert-dismissible fade show"><i class="fas fa-spinner fa-spin me-2"></i>Saving...</div>';
+            document.body.appendChild(indicator);
+
+            setTimeout(() => {
+                document.body.removeChild(indicator);
+            }, 2000);
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+
+            toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+            document.body.appendChild(toast);
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+
+            toast.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(toast);
+            });
+        }
+
+        function detectSystemInfo() {
+            // Browser detection
+            let browserName = 'Unknown';
+            const userAgent = navigator.userAgent;
+
+            if (userAgent.includes('Chrome')) browserName = 'Chrome';
+            else if (userAgent.includes('Firefox')) browserName = 'Firefox';
+            else if (userAgent.includes('Safari')) browserName = 'Safari';
+            else if (userAgent.includes('Edge')) browserName = 'Edge';
+
+            // OS detection
+            let osName = 'Unknown';
+            const platform = navigator.platform;
+
+            if (platform.includes('Win')) osName = 'Windows';
+            else if (platform.includes('Mac')) osName = 'macOS';
+            else if (platform.includes('Linux')) osName = 'Linux';
+            else if (platform.includes('iPhone')) osName = 'iOS';
+            else if (platform.includes('Android')) osName = 'Android';
+
+            // Update display
+            const browserInfo = document.getElementById('browser-info');
+            const osInfo = document.getElementById('os-info');
+
+            if (browserInfo) browserInfo.textContent = browserName;
+            if (osInfo) osInfo.textContent = osName;
+        }
+
+        // Initialize when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSettingsModal);
+        } else {
+            initializeSettingsModal();
+        }
+    </script>
 </body>
 
 </html>
