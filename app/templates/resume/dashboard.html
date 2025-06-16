@@ -167,16 +167,17 @@
                     </div>
                     {% endif %}
                     
+                    <!-- FIXED RESUME ACTIONS -->
                     <div class="resume-actions">
                         <a href="{{ url_for('resume.edit', resume_id=resume.id) }}" class="action-btn primary">
                             <i class="fas fa-pencil-alt"></i>
                             <span>Edit</span>
                         </a>
                         <div class="dropdown">
-                            <button class="action-btn secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <button class="action-btn secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ resume.id }}" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-ellipsis-h"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-modern">
+                            <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenuButton{{ resume.id }}">
                                 <li>
                                     <a href="{{ url_for('resume.export', resume_id=resume.id) }}" class="dropdown-item">
                                         <i class="fas fa-file-pdf"></i> Export as PDF
@@ -189,7 +190,7 @@
                                 </li>
                                 {% if not resume.is_primary %}
                                 <li>
-                                    <form action="{{ url_for('resume.make_primary', resume_id=resume.id) }}" method="POST">
+                                    <form action="{{ url_for('resume.make_primary', resume_id=resume.id) }}" method="POST" style="margin: 0;">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="dropdown-item">
                                             <i class="fas fa-star"></i> Make Primary
@@ -285,6 +286,20 @@
     --shadow-heavy: 0 12px 32px rgba(0, 0, 0, 0.2);
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --primary-color: #6366f1;
+    --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+    --secondary-gradient: linear-gradient(135deg, #06b6d4, #3b82f6);
+    --danger-color: #ef4444;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --card-bg: #ffffff;
+    --card-gradient: linear-gradient(145deg, #ffffff, #f8fafc);
+    --bg-gradient: linear-gradient(135deg, #f8fafc, #e2e8f0);
+    --bg-secondary: #f1f5f9;
+    --border-color: #e5e7eb;
+    --hover-overlay: rgba(99, 102, 241, 0.05);
 }
 
 :root[data-theme="dark"] {
@@ -292,6 +307,14 @@
     --shadow-light: 0 4px 16px rgba(0, 0, 0, 0.3);
     --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.4);
     --shadow-heavy: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --card-bg: #1f2937;
+    --card-gradient: linear-gradient(145deg, #1f2937, #111827);
+    --bg-gradient: linear-gradient(135deg, #111827, #1f2937);
+    --bg-secondary: #374151;
+    --border-color: #374151;
+    --hover-overlay: rgba(99, 102, 241, 0.1);
 }
 
 body {
@@ -758,17 +781,19 @@ body {
 .score-fill.score-fair { background: var(--warning-color); }
 .score-fill.score-poor { background: var(--danger-color); }
 
+/* FIXED RESUME ACTIONS */
 .resume-actions {
     display: flex;
     gap: 0.8rem;
     align-items: center;
+    min-height: 45px; /* Ensure minimum height */
 }
 
 .action-btn {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 8px 16px;
+    padding: 10px 16px;
     border-radius: 20px;
     text-decoration: none;
     font-size: 0.9rem;
@@ -776,6 +801,7 @@ body {
     transition: var(--transition);
     border: none;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .action-btn.primary {
@@ -783,13 +809,15 @@ body {
     color: white;
     flex: 1;
     justify-content: center;
+    min-width: 80px;
 }
 
 .action-btn.secondary {
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    padding: 8px 12px;
+    padding: 10px 12px;
     border: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .action-btn:hover {
@@ -805,30 +833,15 @@ body {
 .action-btn.secondary:hover {
     background: var(--hover-overlay);
     color: var(--text-primary);
-} none;
-    cursor: pointer;
 }
 
-.action-btn.primary {
-    background: var(--primary-gradient);
-    color: white;
-    flex: 1;
-    justify-content: center;
+/* Dropdown fix */
+.dropdown {
+    position: relative;
 }
 
-.action-btn.secondary {
-    background: #e2e8f0;
-    color: #4a5568;
-    padding: 8px 12px;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-light);
-}
-
-.action-btn.primary:hover {
-    color: white;
+.dropdown-toggle::after {
+    display: none; /* Remove default Bootstrap caret */
 }
 
 /* Dropdown */
@@ -838,6 +851,7 @@ body {
     border-radius: 12px;
     box-shadow: var(--shadow-medium);
     padding: 0.5rem 0;
+    min-width: 200px;
 }
 
 .dropdown-menu-modern .dropdown-item {
@@ -851,6 +865,7 @@ body {
     width: 100%;
     text-align: left;
     color: var(--text-primary);
+    font-size: 0.9rem;
 }
 
 .dropdown-menu-modern .dropdown-item:hover {
@@ -865,6 +880,22 @@ body {
 .dropdown-menu-modern .dropdown-item.danger:hover {
     background: rgba(248, 81, 73, 0.1);
     color: var(--danger-color);
+}
+
+.dropdown-divider {
+    border-color: var(--border-color);
+    margin: 0.5rem 0;
+}
+
+/* Form inside dropdown fix */
+.dropdown-menu-modern form {
+    margin: 0;
+    width: 100%;
+}
+
+.dropdown-menu-modern form button {
+    width: 100%;
+    text-align: left;
 }
 
 /* Recommendations Section */
@@ -908,7 +939,7 @@ body {
 
 .rec-icon.ats { background: var(--primary-gradient); }
 .rec-icon.ai { background: var(--secondary-gradient); }
-.rec-icon.templates { background: linear-gradient(145deg, var(--tertiary-color), var(--warning-color)); }
+.rec-icon.templates { background: linear-gradient(145deg, #f59e0b, #d97706); }
 
 .recommendation-card h3 {
     font-size: 1.3rem;
@@ -1090,10 +1121,16 @@ body {
     
     .resume-actions {
         flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .action-btn.primary {
+        width: 100%;
     }
     
     .action-btn.secondary {
         align-self: flex-end;
+        width: auto;
     }
 }
 
@@ -1146,6 +1183,10 @@ body {
 .recommendation-card:nth-child(2) { animation-delay: 0.2s; }
 .recommendation-card:nth-child(3) { animation-delay: 0.4s; }
 </style>
+
+<!-- Include Bootstrap JS (required for dropdowns) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}
 
 {% block extra_scripts %}
@@ -1165,6 +1206,17 @@ document.addEventListener('DOMContentLoaded', function() {
             form.action = "{{ url_for('resume.delete', resume_id=0) }}".replace('/0', '/' + resumeId);
         });
     }
+    
+    // Initialize Bootstrap dropdowns explicitly
+    const dropdownElementList = document.querySelectorAll('.dropdown-toggle');
+    const dropdownList = [...dropdownElementList].map(dropdownToggleEl => new bootstrap.Dropdown(dropdownToggleEl));
+    
+    // Debug dropdown functionality
+    dropdownElementList.forEach(dropdown => {
+        dropdown.addEventListener('click', function(e) {
+            console.log('Dropdown clicked:', this);
+        });
+    });
     
     // Animate ATS score bars on load
     const scoreElements = document.querySelectorAll('.score-fill');
@@ -1187,6 +1239,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
     
     scoreElements.forEach(el => observer.observe(el));
+    
+    // Ensure proper action button visibility
+    const resumeCards = document.querySelectorAll('.resume-card');
+    resumeCards.forEach(card => {
+        const actions = card.querySelector('.resume-actions');
+        if (actions) {
+            actions.style.display = 'flex';
+            actions.style.visibility = 'visible';
+        }
+    });
 });
 </script>
 {% endblock %}
