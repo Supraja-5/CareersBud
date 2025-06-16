@@ -347,104 +347,423 @@
   </div>
 </div>
 
-<!-- CSS for modern design -->
-<style>
-/* General Styles */
-body {
-  background-color: #f8f9fa;
-}
+<!-- Replace the existing <style> section in your coursebud index.html with this modern version -->
 
+<style>
+/* Modern CourseBud Styles with Theme Integration */
+
+/* General Layout */
 .container {
   max-width: 1320px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  color: #212529;
-}
-
-/* Hero Section */
+/* Modern Hero Section with Theme Colors */
 .hero-section {
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
   padding: 5rem 0;
   margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 0;
+}
+
+.hero-section .container {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-section h1 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   line-height: 1.2;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Search Card */
+.hero-section .lead {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+/* Modern Button Styling */
+.btn-light {
+  background: white;
+  border: none;
+  color: var(--primary-color, #2188ff);
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.btn-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+  background: #f8f9fa;
+}
+
+.btn-outline-light {
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  color: white;
+  background: transparent;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background: white;
+  color: var(--primary-color, #2188ff);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+/* Modern Search Card */
 .search-card {
-  border-radius: 1rem;
+  border-radius: 20px;
+  border: none;
+  background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   z-index: 10;
+  backdrop-filter: blur(10px);
 }
 
-.input-group-text, .form-control, .form-select {
-  border-color: #e9ecef;
+.search-card .card-body {
+  padding: 2rem;
 }
 
 .input-group-text {
-  color: #6c757d;
+  background: transparent;
+  border: 2px solid var(--border-color, #e9ecef);
+  color: var(--primary-color, #2188ff);
+  font-weight: 500;
 }
 
-/* Category Cards */
+.form-control, .form-select {
+  border: 2px solid var(--border-color, #e9ecef);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: var(--card-bg, white);
+  color: var(--text-primary, #212529);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary-color, #2188ff);
+  box-shadow: 0 0 0 3px rgba(33, 136, 255, 0.1);
+  background: var(--card-bg, white);
+}
+
+.btn-primary {
+  background: var(--primary-gradient, linear-gradient(145deg, #2188ff, #0969da));
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(33, 136, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 136, 255, 0.4);
+  background: var(--primary-hover, linear-gradient(145deg, #1f6feb, #0550ae));
+}
+
+/* Modern Section Headers */
+h2.fw-bold {
+  font-size: 2.5rem;
+  color: var(--text-primary, #212529);
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.border-start.border-4.border-primary {
+  border-color: var(--primary-color, #2188ff) !important;
+  border-width: 4px !important;
+  padding-left: 1.5rem !important;
+}
+
+/* Modern Category Cards */
 .category-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 1rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 20px;
+  border: none;
+  background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  position: relative;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--primary-gradient, linear-gradient(90deg, #2188ff, #0969da));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
 }
 
 .category-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.category-card:hover::before {
+  transform: scaleX(1);
 }
 
 .category-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(var(--bs-primary-rgb), 0.1);
+  background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
+  color: white;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 20px rgba(33, 136, 255, 0.3);
 }
 
-/* Course Cards */
+.category-card .card-title {
+  font-weight: 700;
+  color: var(--text-primary, #212529);
+  font-size: 1.25rem;
+}
+
+/* Modern Course Cards */
 .course-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 1rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 20px;
+  border: none;
+  background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  position: relative;
 }
 
 .course-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
-.card-img-top {
-  height: 200px;
+.course-card .card-img-top {
+  height: 220px;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-/* CTA Section */
+.course-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.course-card .card-body {
+  padding: 1.5rem;
+}
+
+.course-card .card-title {
+  font-weight: 700;
+  color: var(--text-primary, #212529);
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+/* Modern Badges */
+.badge.bg-primary {
+  background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da)) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.badge.bg-secondary {
+  background: var(--secondary-gradient, linear-gradient(135deg, #6c757d, #495057)) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.badge.bg-success {
+  background: var(--success-color, #2da44e) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+.badge.bg-warning {
+  background: var(--warning-color, #bf8700) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+/* Modern CTA Section */
 .bg-gradient-secondary {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: var(--secondary-gradient, linear-gradient(135deg, #2da44e, #3fb950)) !important;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Testimonials */
-.testimonial-card {
-  border-radius: 1rem;
+.bg-gradient-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive Adjustments */
+.bg-gradient-secondary .card-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* Modern Testimonial Cards */
+.card.h-100 {
+  border-radius: 20px;
+  border: none;
+  background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.card.h-100:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+/* Star Ratings */
+.text-warning i {
+  color: #fbbf24 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Modern Button Variants */
+.btn-outline-primary {
+  border: 2px solid var(--primary-color, #2188ff);
+  color: var(--primary-color, #2188ff);
+  background: transparent;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary-color, #2188ff);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(33, 136, 255, 0.3);
+}
+
+.btn-sm {
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+}
+
+/* Dark Theme Adjustments */
+[data-theme="dark"] .hero-section {
+  background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
+}
+
+[data-theme="dark"] .search-card,
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .course-card,
+[data-theme="dark"] .card.h-100 {
+  background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+  color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .card-footer {
+  background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+  border-color: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .bg-light {
+  background: var(--card-bg, #21262d) !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--text-secondary, #8b949e) !important;
+}
+
+[data-theme="dark"] .category-icon-wrapper {
+  background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
+  box-shadow: 0 8px 20px rgba(33, 136, 255, 0.4);
+}
+
+[data-theme="dark"] h2.fw-bold,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color, #30363d);
+  color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--primary-color, #2188ff);
+  color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .input-group-text {
+  background: transparent;
+  border-color: var(--border-color, #30363d);
+  color: var(--primary-color, #2188ff);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .hero-section h1 {
+    font-size: 3rem;
+  }
+  
+  h2.fw-bold {
+    font-size: 2.25rem;
+  }
+}
+
 @media (max-width: 992px) {
+  .hero-section {
+    padding: 4rem 0;
+  }
+  
   .hero-section h1 {
     font-size: 2.5rem;
   }
   
   .search-card {
     margin-top: 0 !important;
+  }
+  
+  .search-card .card-body {
+    padding: 1.5rem;
   }
 }
 
@@ -458,38 +777,82 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .lead {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  h2.fw-bold {
+    font-size: 1.75rem;
+  }
+  
+  .search-card .card-body {
+    padding: 1rem;
+  }
+  
+  .category-icon-wrapper {
+    width: 60px;
+    height: 60px;
   }
 }
 
-/* Dark Mode Adjustments */
-[data-theme="dark"] .search-card,
-[data-theme="dark"] .category-card,
-[data-theme="dark"] .course-card {
-  background-color: #1e293b;
-  border-color: #334155;
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 1.75rem;
+  }
+  
+  .hero-section .lead {
+    font-size: 1rem;
+  }
+  
+  .d-flex.flex-wrap.gap-3 {
+    flex-direction: column;
+  }
+  
+  .btn-lg {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-[data-theme="dark"] .card-footer {
-  background-color: #1e293b;
-  border-color: #334155;
+/* Animation Enhancements */
+.category-card,
+.course-card,
+.card.h-100 {
+  animation: fadeInUp 0.6s ease-out;
 }
 
-[data-theme="dark"] .bg-light {
-  background-color: #1e293b !important;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-[data-theme="dark"] .text-muted {
-  color: #94a3b8 !important;
+/* Add staggered animation delay */
+.row .col-6:nth-child(1) .category-card,
+.row .col-md-6:nth-child(1) .course-card { animation-delay: 0.1s; }
+.row .col-6:nth-child(2) .category-card,
+.row .col-md-6:nth-child(2) .course-card { animation-delay: 0.2s; }
+.row .col-6:nth-child(3) .category-card,
+.row .col-md-6:nth-child(3) .course-card { animation-delay: 0.3s; }
+.row .col-6:nth-child(4) .category-card,
+.row .col-md-6:nth-child(4) .course-card { animation-delay: 0.4s; }
+
+/* Modern hover effects for links */
+a.text-decoration-none {
+  transition: all 0.3s ease;
 }
 
-[data-theme="dark"] .category-icon-wrapper {
-  background-color: rgba(var(--bs-primary-rgb), 0.2);
-}
-
-/* Z-index utility */
+/* Utility Classes */
 .z-index-1 {
   z-index: 1;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
 </style>
 {% endblock %}

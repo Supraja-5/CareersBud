@@ -1,232 +1,809 @@
-<!-- /workspaces/Studbud/app/templates/coursebud/teach.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Your Courses</h1>
-        <a href="{{ url_for('coursebud.create_new_course') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New Course
-        </a>
-    </div>
-
-    <!-- Status tabs -->
-    <ul class="nav nav-tabs mb-4" id="coursesTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab" aria-controls="approved" aria-selected="true">
-                Published ({{ approved_courses|length }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab" aria-controls="draft" aria-selected="false">
-                Drafts ({{ draft_courses|length }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false">
-                Pending Review ({{ pending_courses|length }})
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">
-                Rejected ({{ rejected_courses|length }})
-            </button>
-        </li>
-    </ul>
-
-    <!-- Tab contents -->
-    <div class="tab-content" id="coursesTabContent">
-        <!-- Approved Courses -->
-        <div class="tab-pane fade show active" id="approved" role="tabpanel" aria-labelledby="approved-tab">
-            {% if approved_courses %}
-                <div class="row">
-                    {% for course in approved_courses %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                {% if course.thumbnail %}
-                                    <img src="{{ url_for('static', filename='uploads/' + course.thumbnail) }}" class="card-img-top" alt="{{ course.title }}">
+<div class="container-fluid py-4">
+    <!-- Instructor Profile Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-gradient-primary text-white">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 text-center text-lg-start mb-3 mb-lg-0">
+                            <div class="instructor-avatar">
+                                {% if current_user.profile_picture and current_user.profile_picture != 'default_profile.jpg' %}
+                                    <img src="{{ url_for('static', filename='uploads/profiles/' + current_user.profile_picture) }}" 
+                                         class="rounded-circle border border-3 border-white" 
+                                         style="width: 120px; height: 120px; object-fit: cover;" 
+                                         alt="Instructor Profile">
                                 {% else %}
-                                    <div class="card-img-top bg-light text-center py-4">
-                                        <i class="fas fa-book fa-2x text-muted"></i>
+                                    <div class="rounded-circle bg-white bg-opacity-25 d-inline-flex align-items-center justify-content-center border border-3 border-white" 
+                                         style="width: 120px; height: 120px;">
+                                        <i class="fas fa-chalkboard-teacher fa-3x text-white"></i>
                                     </div>
                                 {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ course.title }}</h5>
-                                    <p class="card-text">{{ course.description|truncate(100) }}</p>
-                                    <div class="mt-2">
-                                        <span class="badge {% if course.is_free %}bg-success{% elif course.is_premium %}bg-warning{% else %}bg-primary{% endif %}">
-                                            {% if course.is_free %}Free{% elif course.is_premium %}Premium{% else %}${{ course.price }}{% endif %}
-                                        </span>
-                                        <span class="badge bg-secondary">{{ course.level|capitalize }}</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-between">
-                                        <a href="{{ url_for('coursebud.view_course', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">View</a>
-                                        <a href="{{ url_for('coursebud.course_stats', course_id=course.id) }}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="fas fa-chart-bar"></i> Stats
-                                        </a>
-                                    </div>
+                                <div class="mt-2">
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fas fa-star me-1"></i>Instructor
+                                    </span>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    You don't have any published courses yet. Create a course and submit it for review to get started.
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Draft Courses -->
-        <div class="tab-pane fade" id="draft" role="tabpanel" aria-labelledby="draft-tab">
-            {% if draft_courses %}
-                <div class="row">
-                    {% for course in draft_courses %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                {% if course.thumbnail %}
-                                    <img src="{{ url_for('static', filename='uploads/' + course.thumbnail) }}" class="card-img-top" alt="{{ course.title }}">
-                                {% else %}
-                                    <div class="card-img-top bg-light text-center py-4">
-                                        <i class="fas fa-edit fa-2x text-muted"></i>
-                                    </div>
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ course.title }}</h5>
-                                    <p class="card-text">{{ course.description|truncate(100) }}</p>
+                        
+                        <div class="col-lg-6">
+                            <h1 class="display-6 fw-bold mb-2">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+                            <p class="lead mb-3">{{ current_user.major }} • {{ current_user.university }}</p>
+                            
+                            <!-- Quick Stats -->
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="h4 fw-bold mb-0">{{ total_courses|default(0) }}</div>
+                                    <div class="small opacity-75">Courses</div>
                                 </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-between">
-                                        <a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                                        <form action="{{ url_for('coursebud.submit_for_review', course_id=course.id) }}" method="post" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <button type="submit" class="btn btn-sm btn-success">Submit for Review</button>
-                                        </form>
-                                    </div>
+                                <div class="col-4">
+                                    <div class="h4 fw-bold mb-0">{{ total_students|default(0) }}</div>
+                                    <div class="small opacity-75">Students</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="h4 fw-bold mb-0">{{ average_rating|default(0)|round(1) }}</div>
+                                    <div class="small opacity-75">Rating</div>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    You don't have any draft courses. Create a new course to get started.
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Pending Courses -->
-        <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="pending-tab">
-            {% if pending_courses %}
-                <div class="row">
-                    {% for course in pending_courses %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                {% if course.thumbnail %}
-                                    <img src="{{ url_for('static', filename='uploads/' + course.thumbnail) }}" class="card-img-top" alt="{{ course.title }}">
-                                {% else %}
-                                    <div class="card-img-top bg-light text-center py-4">
-                                        <i class="fas fa-clock fa-2x text-warning"></i>
-                                    </div>
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ course.title }}</h5>
-                                    <p class="card-text">{{ course.description|truncate(100) }}</p>
-                                    <div class="alert alert-warning mt-2">
-                                        <small>This course is pending review by our administrators.</small>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <a href="{{ url_for('coursebud.view_course', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">Preview</a>
-                                </div>
+                        
+                        <div class="col-lg-3 text-center text-lg-end">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('coursebud.create_new_course') }}" class="btn btn-light btn-lg">
+                                    <i class="fas fa-plus me-2"></i>New Course
+                                </a>
+                                <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#profileSettingsModal">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </button>
                             </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    You don't have any courses pending review.
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Rejected Courses -->
-        <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
-            {% if rejected_courses %}
-                <div class="row">
-                    {% for course in rejected_courses %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                {% if course.thumbnail %}
-                                    <img src="{{ url_for('static', filename='uploads/' + course.thumbnail) }}" class="card-img-top" alt="{{ course.title }}">
-                                {% else %}
-                                    <div class="card-img-top bg-light text-center py-4">
-                                        <i class="fas fa-times-circle fa-2x text-danger"></i>
-                                    </div>
-                                {% endif %}
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ course.title }}</h5>
-                                    <p class="card-text">{{ course.description|truncate(100) }}</p>
-                                    <div class="alert alert-danger mt-2">
-                                        <strong>Rejection Reason:</strong>
-                                        <p>{{ course.approval_notes or 'No specific reason provided.' }}</p>
-                                    </div>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-between">
-                                        <a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}" class="btn btn-sm btn-outline-primary">Edit & Resubmit</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    You don't have any rejected courses.
-                </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Instructor Resources -->
-    <div class="card mt-5">
-        <div class="card-header bg-light">
-            <h3 class="mb-0">Instructor Resources</h3>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-book-reader"></i> Course Creation Guide</h5>
-                            <p class="card-text">Learn how to create engaging and effective courses that students will love.</p>
-                            <a href="#" class="btn btn-sm btn-outline-primary">Read Guide</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-video"></i> Video Recording Tips</h5>
-                            <p class="card-text">Get tips for recording high-quality video lectures for your courses.</p>
-                            <a href="#" class="btn btn-sm btn-outline-primary">View Tips</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-question-circle"></i> FAQ for Instructors</h5>
-                            <p class="card-text">Find answers to common questions about teaching on CourseBud.</p>
-                            <a href="#" class="btn btn-sm btn-outline-primary">View FAQ</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Dashboard Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-chart-line text-primary fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="h5 fw-bold mb-0">${{ monthly_earnings|default(0)|round(2) }}</div>
+                            <div class="text-muted small">This Month</div>
+                            <div class="text-success small">
+                                <i class="fas fa-arrow-up me-1"></i>+12.5%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-users text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="h5 fw-bold mb-0">{{ new_enrollments|default(0) }}</div>
+                            <div class="text-muted small">New This Week</div>
+                            <div class="text-success small">
+                                <i class="fas fa-arrow-up me-1"></i>+{{ enrollment_growth|default(0) }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-star text-warning fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="h5 fw-bold mb-0">{{ new_reviews|default(0) }}</div>
+                            <div class="text-muted small">New Reviews</div>
+                            <div class="text-info small">
+                                <i class="fas fa-eye me-1"></i>View All
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-clock text-info fa-lg"></i>
+                        </div>
+                        <div>
+                            <div class="h5 fw-bold mb-0">{{ pending_courses|length|default(0) }}</div>
+                            <div class="text-muted small">Pending Review</div>
+                            {% if pending_courses|length > 0 %}
+                                <div class="text-warning small">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>Needs Action
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions & Recent Activity -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <!-- Course Management -->
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-0 fw-bold">Course Management</h3>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" data-filter="all">All Courses</a></li>
+                            <li><a class="dropdown-item" href="#" data-filter="published">Published</a></li>
+                            <li><a class="dropdown-item" href="#" data-filter="draft">Drafts</a></li>
+                            <li><a class="dropdown-item" href="#" data-filter="pending">Pending</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <!-- Course Status Tabs -->
+                    <ul class="nav nav-tabs nav-fill border-0" id="coursesTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active px-4 py-3" id="published-tab" data-bs-toggle="tab" data-bs-target="#published" type="button" role="tab">
+                                <i class="fas fa-check-circle me-2 text-success"></i>
+                                Published <span class="badge bg-success ms-1">{{ approved_courses|length }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link px-4 py-3" id="draft-tab" data-bs-toggle="tab" data-bs-target="#draft" type="button" role="tab">
+                                <i class="fas fa-edit me-2 text-secondary"></i>
+                                Drafts <span class="badge bg-secondary ms-1">{{ draft_courses|length }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link px-4 py-3" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                                <i class="fas fa-clock me-2 text-warning"></i>
+                                Review <span class="badge bg-warning text-dark ms-1">{{ pending_courses|length }}</span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link px-4 py-3" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab">
+                                <i class="fas fa-times-circle me-2 text-danger"></i>
+                                Rejected <span class="badge bg-danger ms-1">{{ rejected_courses|length }}</span>
+                            </button>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content p-4" id="coursesTabContent">
+                        <!-- Published Courses -->
+                        <div class="tab-pane fade show active" id="published" role="tabpanel">
+                            {% if approved_courses %}
+                                <div class="row g-3">
+                                    {% for course in approved_courses %}
+                                        <div class="col-md-6 col-xl-4">
+                                            <div class="card border-0 shadow-sm h-100 course-card">
+                                                <div class="position-relative">
+                                                    {% if course.thumbnail %}
+                                                        <img src="{{ url_for('static', filename='uploads/' + course.thumbnail) }}" 
+                                                             class="card-img-top" style="height: 150px; object-fit: cover;" alt="{{ course.title }}">
+                                                    {% else %}
+                                                        <div class="card-img-top bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 150px;">
+                                                            <i class="fas fa-book fa-2x text-white"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div class="position-absolute top-0 end-0 m-2">
+                                                        <span class="badge {% if course.is_free %}bg-success{% elif course.is_premium %}bg-warning text-dark{% else %}bg-primary{% endif %}">
+                                                            {% if course.is_free %}Free{% elif course.is_premium %}Premium{% else %} ${{ course.price }}{% endif %}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body p-3">
+                                                    <h6 class="card-title fw-bold mb-2">{{ course.title }}</h6>
+                                                    <p class="card-text text-muted small mb-3">{{ course.description|truncate(80) }}</p>
+                                                    
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-users text-muted me-1"></i>
+                                                            <span class="small">{{ course.total_students() }} students</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="fas fa-star text-warning me-1"></i>
+                                                            <span class="small">{{ course.average_rating()|round(1) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer bg-white border-0 p-3 pt-0">
+                                                    <div class="btn-group w-100" role="group">
+                                                        <a href="{{ url_for('coursebud.view_course', course_id=course.id) }}" 
+                                                           class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye me-1"></i>View
+                                                        </a>
+                                                        <a href="{{ url_for('coursebud.course_stats', course_id=course.id) }}" 
+                                                           class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-chart-bar me-1"></i>Analytics
+                                                        </a>
+                                                        <a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}" 
+                                                           class="btn btn-sm btn-outline-secondary">
+                                                            <i class="fas fa-edit me-1"></i>Edit
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-graduation-cap fa-2x text-muted"></i>
+                                    </div>
+                                    <h5 class="text-muted">No Published Courses Yet</h5>
+                                    <p class="text-muted mb-4">Create your first course and submit it for review to start teaching!</p>
+                                    <a href="{{ url_for('coursebud.create_new_course') }}" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Create Your First Course
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Draft Courses -->
+                        <div class="tab-pane fade" id="draft" role="tabpanel">
+                            {% if draft_courses %}
+                                <div class="row g-3">
+                                    {% for course in draft_courses %}
+                                        <div class="col-md-6">
+                                            <div class="card border-0 shadow-sm h-100">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="rounded bg-light p-2 me-3">
+                                                            <i class="fas fa-edit text-muted"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="fw-bold mb-1">{{ course.title }}</h6>
+                                                            <p class="text-muted small mb-3">{{ course.description|truncate(100) }}</p>
+                                                            <div class="d-flex gap-2">
+                                                                <a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}" 
+                                                                   class="btn btn-sm btn-primary">
+                                                                    <i class="fas fa-edit me-1"></i>Continue Editing
+                                                                </a>
+                                                                <form action="{{ url_for('coursebud.submit_for_review', course_id=course.id) }}" 
+                                                                      method="post" class="d-inline">
+                                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                                        <i class="fas fa-paper-plane me-1"></i>Submit for Review
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-edit fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">No Draft Courses</h6>
+                                    <p class="text-muted">Start creating a new course to see it here.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Pending Review -->
+                        <div class="tab-pane fade" id="pending" role="tabpanel">
+                            {% if pending_courses %}
+                                <div class="row g-3">
+                                    {% for course in pending_courses %}
+                                        <div class="col-md-6">
+                                            <div class="card border-warning border-2 h-100">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="rounded bg-warning bg-opacity-10 p-2 me-3">
+                                                            <i class="fas fa-clock text-warning"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="fw-bold mb-1">{{ course.title }}</h6>
+                                                            <p class="text-muted small mb-2">{{ course.description|truncate(100) }}</p>
+                                                            <div class="alert alert-warning py-2 px-3 mb-3">
+                                                                <small><i class="fas fa-info-circle me-1"></i>Under review by administrators</small>
+                                                            </div>
+                                                            <a href="{{ url_for('coursebud.view_course', course_id=course.id) }}" 
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-eye me-1"></i>Preview
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                                    <h6 class="text-muted">No Courses Pending Review</h6>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Rejected Courses -->
+                        <div class="tab-pane fade" id="rejected" role="tabpanel">
+                            {% if rejected_courses %}
+                                <div class="row g-3">
+                                    {% for course in rejected_courses %}
+                                        <div class="col-12">
+                                            <div class="card border-danger border-2">
+                                                <div class="card-body">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-8">
+                                                            <h6 class="fw-bold mb-1">{{ course.title }}</h6>
+                                                            <p class="text-muted small mb-2">{{ course.description|truncate(100) }}</p>
+                                                            <div class="alert alert-danger py-2 px-3 mb-0">
+                                                                <small><strong>Rejection Reason:</strong> {{ course.approval_notes or 'No specific reason provided.' }}</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                                            <a href="{{ url_for('coursebud.edit_course', course_id=course.id) }}" 
+                                                               class="btn btn-primary">
+                                                                <i class="fas fa-edit me-1"></i>Fix & Resubmit
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                                    <h6 class="text-muted">No Rejected Courses</h6>
+                                    <p class="text-muted">Great job! All your submissions have been approved.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Quick Actions & Resources -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h3 class="h6 mb-0 fw-bold">Quick Actions</h3>
+                </div>
+                <div class="card-body p-3">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('coursebud.create_new_course') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create New Course
+                        </a>
+                        <a href="#" class="btn btn-outline-primary">
+                            <i class="fas fa-chart-line me-2"></i>View Analytics
+                        </a>
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fas fa-comments me-2"></i>Student Messages
+                        </a>
+                        <a href="#" class="btn btn-outline-info">
+                            <i class="fas fa-dollar-sign me-2"></i>Earnings Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reviews -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h3 class="h6 mb-0 fw-bold">Recent Reviews</h3>
+                    <a href="#" class="small text-primary">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    {% if recent_reviews %}
+                        {% for review in recent_reviews[:3] %}
+                            <div class="p-3 border-bottom">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="me-2">
+                                        {% for i in range(5) %}
+                                            <i class="fas fa-star {% if i < review.rating %}text-warning{% else %}text-muted{% endif %} small"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ review.created_at.strftime('%b %d') if review.created_at else 'Recent' }}</small>
+                                </div>
+                                <p class="small mb-1 fw-medium">{{ review.course.title }}</p>
+                                <p class="small text-muted mb-0">{{ review.review_text|truncate(80) if review.review_text else 'No comment provided.' }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="p-3 text-center">
+                            <i class="fas fa-star fa-2x text-muted mb-2"></i>
+                            <p class="small text-muted mb-0">No reviews yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Instructor Resources -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h3 class="h6 mb-0 fw-bold">Instructor Resources</h3>
+                </div>
+                <div class="card-body p-3">
+                    <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-primary bg-opacity-10 p-2 me-3">
+                                    <i class="fas fa-book-reader text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium small">Course Creation Guide</div>
+                                    <div class="text-muted small">Best practices for engaging courses</div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-success bg-opacity-10 p-2 me-3">
+                                    <i class="fas fa-video text-success"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium small">Video Recording Tips</div>
+                                    <div class="text-muted small">Technical guidelines for quality content</div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-warning bg-opacity-10 p-2 me-3">
+                                    <i class="fas fa-question-circle text-warning"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium small">Instructor FAQ</div>
+                                    <div class="text-muted small">Common questions and answers</div>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action border-0 px-0">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-info bg-opacity-10 p-2 me-3">
+                                    <i class="fas fa-users text-info"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-medium small">Community Forum</div>
+                                    <div class="text-muted small">Connect with other instructors</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Profile Settings Modal -->
+<div class="modal fade" id="profileSettingsModal" tabindex="-1" aria-labelledby="profileSettingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="profileSettingsModalLabel">Instructor Profile Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="#" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="website" class="form-label">Personal Website</label>
+                                <input type="url" class="form-control" id="website" name="website" placeholder="https://yourwebsite.com">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label">Notification Preferences</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="email_enrollments" name="email_enrollments" checked>
+                                    <label class="form-check-label" for="email_enrollments">
+                                        Email me when students enroll in my courses
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="email_reviews" name="email_reviews" checked>
+                                    <label class="form-check-label" for="email_reviews">
+                                        Email me when students leave reviews
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="email_messages" name="email_messages" checked>
+                                    <label class="form-check-label" for="email_messages">
+                                        Email me when students send messages
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Custom styles for instructor dashboard */
+.course-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.course-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: none;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom-color: var(--bs-primary);
+    background: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.instructor-avatar img,
+.instructor-avatar > div {
+    transition: transform 0.3s ease;
+}
+
+.instructor-avatar:hover img,
+.instructor-avatar:hover > div {
+    transform: scale(1.05);
+}
+
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+/* Stats cards animation */
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-1px);
+}
+
+/* Progress bars for course completion */
+.progress {
+    height: 4px;
+}
+
+/* Badge animations */
+.badge {
+    transition: transform 0.2s ease;
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Custom scrollbar for sidebar */
+.card-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 2px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .instructor-avatar {
+        margin-bottom: 1rem;
+    }
+    
+    .display-6 {
+        font-size: 1.5rem;
+    }
+    
+    .card-body .btn-group {
+        flex-direction: column;
+    }
+    
+    .card-body .btn-group .btn {
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .card {
+        background-color: #1a1a1a;
+        border-color: #333;
+    }
+    
+    .bg-light {
+        background-color: #2a2a2a !important;
+    }
+    
+    .text-muted {
+        color: #888 !important;
+    }
+}
+
+/* Loading states */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Course filter functionality
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.dataset.filter;
+            // Add filter logic here based on your needs
+            console.log('Filtering by:', filter);
+        });
+    });
+
+    // Auto-refresh dashboard data every 5 minutes
+    setInterval(function() {
+        // Add AJAX call to refresh dashboard statistics
+        console.log('Refreshing dashboard data...');
+    }, 300000);
+
+    // Profile picture preview
+    const profilePictureInput = document.getElementById('profile_picture');
+    if (profilePictureInput) {
+        profilePictureInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Preview the image
+                    console.log('Image preview ready');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Add loading states to buttons
+    const actionButtons = document.querySelectorAll('.btn[type="submit"]');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.classList.add('loading');
+            this.disabled = true;
+            
+            // Re-enable after 3 seconds (remove this in production)
+            setTimeout(() => {
+                this.classList.remove('loading');
+                this.disabled = false;
+            }, 3000);
+        });
+    });
+
+    // Animate stats cards on page load
+    const statsCards = document.querySelectorAll('.card');
+    statsCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Toast notifications for actions
+    function showToast(message, type = 'success') {
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        
+        // Add to page and show
+        document.body.appendChild(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        // Remove after hiding
+        toast.addEventListener('hidden.bs.toast', () => {
+            document.body.removeChild(toast);
+        });
+    }
+
+    // Example usage for form submissions
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Add your form submission logic here
+            // showToast('Settings updated successfully!');
+        });
+    });
+});
+</script>
+
 {% endblock %}

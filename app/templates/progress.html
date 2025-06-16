@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container-fluid py-4">
     <!-- Progress Tracker Header -->
-    <div class="row mb-4">
+    <div class="row mb-4" id="progress-head">
         <div class="col-12">
             <div class="card border-0 shadow-sm bg-gradient-primary text-white">
                 <div class="card-body p-4">
@@ -137,11 +137,13 @@
                 </div>
                 
                 <!-- Current Courses -->
+                <!-- Current Courses -->
                 <div class="col-lg-8 mb-4">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                             <h3 class="h5 mb-0 fw-bold">Current Courses</h3>
-                            <button class="btn btn-sm btn-outline-primary">
+                            <!-- FIXED: Add modal trigger to this button -->
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                                 <i class="fas fa-plus me-1"></i>Add Course
                             </button>
                         </div>
@@ -185,7 +187,8 @@
                                         <i class="fas fa-book fa-2x text-muted"></i>
                                     </div>
                                     <p class="mb-3">No current courses.</p>
-                                    <button class="btn btn-primary">
+                                    <!-- FIXED: Add modal trigger to this button -->
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                                         <i class="fas fa-plus me-2"></i>Add Course
                                     </button>
                                 </div>
@@ -947,36 +950,367 @@
         </div>
     </div>
 </div>
+<!-- Add this right after your existing "Add Skill Modal" and before the final closing divs -->
+
+<!-- Add this modal right after your "Add Skill Modal" and before the final closing divs -->
+
+<!-- Add Course Modal -->
+<!-- Add Course Modal -->
+<div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addCourseModalLabel">Add Course to Track</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('progress.add_current_course') }}">
+                    <!-- HIDDEN CSRF TOKEN -->
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    
+                    <div class="mb-3">
+                        <label for="course_name" class="form-label">Course Name</label>
+                        <input type="text" class="form-control" id="course_name" name="course_name" required placeholder="e.g., Computer Science 101">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Business">Business</option>
+                            <option value="Liberal Arts">Liberal Arts</option>
+                            <option value="Science">Science</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="credits" class="form-label">Credits</label>
+                        <input type="number" class="form-control" id="credits" name="credits" min="1" max="6" value="3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="semester" class="form-label">Semester</label>
+                        <input type="text" class="form-control" id="semester" name="semester" placeholder="e.g., Fall 2024">
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Add Course</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update the percentage display for skill form
+document.addEventListener('DOMContentLoaded', function() {
+    const percentageSlider = document.getElementById('percentage');
+    const percentageValue = document.getElementById('percentageValue');
+    
+    if (percentageSlider && percentageValue) {
+        percentageSlider.addEventListener('input', function() {
+            percentageValue.textContent = this.value + '%';
+        });
+    }
+});
+</script>
+<!-- Replace the existing <style> section in your progress tracker with this modern version -->
+
+<!-- Replace the existing <style> section in your progress tracker with this modern version -->
 
 <style>
-/* Modern Progress Tracker Styles */
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #4f46e5, #3b82f6);
+/* Modern Progress Tracker Styles with Theme Integration */
+
+/* SPECIFIC STYLING FOR PROGRESS HEADER SECTION */
+
+/* Target only the progress header with ID */
+#progress-head .bg-gradient-primary {
+    background: linear-gradient(135deg, 
+        var(--primary-color, #2188ff) 0%, 
+        var(--info-color, #58a6ff) 25%, 
+        #4A90E2 50%, 
+        #2E86AB 75%, 
+        var(--primary-color, #2188ff) 100%) !important;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px !important;
+}
+
+#progress-head .bg-gradient-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.1) 100%);
+    z-index: 0;
+}
+
+#progress-head .card-body {
+    position: relative;
+    z-index: 1;
+}
+
+/* Target text in progress header specifically */
+#progress-head .bg-gradient-primary h1,
+#progress-head .bg-gradient-primary .display-5 {
+    color: white !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    font-weight: 800 !important;
+}
+
+#progress-head .bg-gradient-primary .lead,
+#progress-head .bg-gradient-primary p {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+    font-weight: 500 !important;
+}
+
+/* Style university and major info specifically */
+#progress-head .bg-gradient-primary .d-flex.align-items-center span {
+    color: white !important; /* Gold color */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+/* Style icon backgrounds in progress header */
+#progress-head .rounded-circle.bg-white.bg-opacity-25 {
+    background: rgba(255, 215, 0, 0.2) !important; /* Gold tint */
+    border: 2px solid rgba(255, 215, 0, 0.4) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+#progress-head .rounded-circle.bg-white.bg-opacity-25:hover {
+    background: rgba(255, 215, 0, 0.3) !important;
+    border-color: rgba(255, 215, 0, 0.6) !important;
+    transform: scale(1.05);
+}
+
+/* Style icons in progress header */
+#progress-head .rounded-circle i {
+    color: white black !important; /* Gold icons */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+    font-size: 1.1rem !important;
+}
+
+/* Add subtle animation to the progress header */
+#progress-head .card {
+    animation: slideInDown 0.8s ease-out;
+    box-shadow: 0 10px 30px rgba(33, 136, 255, 0.2) !important;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark theme specific adjustments for progress header */
+[data-theme="dark"] #progress-head .bg-gradient-primary {
+    background: linear-gradient(135deg, 
+        var(--primary-color, #2188ff) 0%, 
+        #3b82f6 25%, 
+        #1e40af 50%, 
+        #1e3a8a 75%, 
+        var(--primary-color, #2188ff) 100%) !important;
+    box-shadow: 0 10px 30px rgba(33, 136, 255, 0.3) !important;
+}
+
+[data-theme="dark"] #progress-head .bg-gradient-primary::before {
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.05) 0%, 
+        transparent 50%, 
+        rgba(255, 255, 255, 0.05) 100%);
+}
+
+/* Enhanced styling for responsive design */
+@media (max-width: 992px) {
+    #progress-head .bg-gradient-primary h1 {
+        font-size: 2.5rem !important;
+    }
+    
+    #progress-head .d-flex.flex-column {
+        align-items: center !important;
+        text-align: center;
+    }
+    
+    #progress-head .col-lg-4 {
+        margin-top: 1.5rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #progress-head .bg-gradient-primary {
+        border-radius: 15px !important;
+    }
+    
+    #progress-head .bg-gradient-primary h1 {
+        font-size: 2rem !important;
+    }
+    
+    #progress-head .lead {
+        font-size: 1.1rem !important;
+    }
+    
+    #progress-head .rounded-circle {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    #progress-head .rounded-circle i {
+        font-size: 1rem !important;
+    }
+    
+    #progress-head .d-flex.align-items-center span {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Add subtle glow effect for modern look */
+#progress-head .card:hover {
+    box-shadow: 0 15px 40px rgba(33, 136, 255, 0.25) !important;
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Progress header card styling */
+#progress-head .card {
+    border: none !important;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add a subtle border effect */
+#progress-head .bg-gradient-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Modern Navigation Tabs */
+.nav-tabs {
+    border-bottom: 2px solid var(--border-color, #e9ecef);
+    margin-bottom: 2rem;
 }
 
 .nav-tabs .nav-link {
-    color: #6c757d;
+    color: var(--text-secondary, #6c757d);
     border: none;
-    padding: 0.75rem 1rem;
-    font-weight: 500;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
     border-bottom: 3px solid transparent;
+    border-radius: 12px 12px 0 0;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .nav-tabs .nav-link:hover {
     border-color: transparent;
-    color: var(--bs-primary);
+    color: var(--primary-color, #2188ff);
+    background: rgba(33, 136, 255, 0.05);
+    transform: translateY(-2px);
 }
 
 .nav-tabs .nav-link.active {
-    color: var(--bs-primary);
-    background-color: transparent;
-    border-bottom: 3px solid var(--bs-primary);
+    color: var(--primary-color, #2188ff);
+    background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+    border-bottom: 3px solid var(--primary-color, #2188ff);
+    box-shadow: 0 4px 15px rgba(33, 136, 255, 0.15);
 }
 
+.nav-tabs .nav-link i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Modern Cards */
+.card {
+    border: none !important;
+    border-radius: 20px !important;
+    background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc)) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    overflow: hidden;
+    position: relative;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient, linear-gradient(90deg, #2188ff, #0969da));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-color, #e9ecef) !important;
+    padding: 1.5rem !important;
+    font-weight: 700;
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+/* Modern Progress Circles */
 .progress-circle {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+}
+
+.progress-circle svg {
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.progress-circle svg circle:first-child {
+    stroke: var(--border-color, #e9ecef);
+    stroke-width: 8;
+}
+
+.progress-circle svg circle:last-child {
+    stroke-width: 8;
+    stroke-linecap: round;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .progress-circle-content {
@@ -987,24 +1321,156 @@
     text-align: center;
 }
 
-.skill-card, .achievement-card, .certificate-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.progress-circle-content .h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary, #212529);
+    margin-bottom: 0.25rem;
 }
 
-.skill-card:hover, .achievement-card:hover, .certificate-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+.progress-circle-content .small {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Timeline Styles */
+/* Modern Progress Bars */
+.progress {
+    height: 12px !important;
+    border-radius: 10px !important;
+    background: var(--border-color, #e9ecef) !important;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    border-radius: 10px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar.bg-success {
+    background: var(--success-color, linear-gradient(135deg, #2da44e, #3fb950)) !important;
+}
+
+.progress-bar.bg-primary {
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da)) !important;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 33%, rgba(255,255,255,0.3) 33%, rgba(255,255,255,0.3) 66%, transparent 66%);
+    background-size: 30px 30px;
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Modern Buttons */
+.btn {
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    transition: all 0.3s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da)) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(33, 136, 255, 0.3) !important;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(33, 136, 255, 0.4) !important;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary-color, #2188ff) !important;
+    color: var(--primary-color, #2188ff) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color, #2188ff) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(33, 136, 255, 0.3) !important;
+}
+
+.btn-sm {
+    border-radius: 10px !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+}
+
+/* Modern Badges */
+.badge {
+    border-radius: 12px !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.bg-primary {
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da)) !important;
+}
+
+.badge.bg-success {
+    background: var(--success-color, #2da44e) !important;
+}
+
+.badge.bg-warning {
+    background: var(--warning-color, #bf8700) !important;
+}
+
+.badge.bg-danger {
+    background: var(--danger-color, #f85149) !important;
+}
+
+.badge.bg-info {
+    background: var(--info-color, #58a6ff) !important;
+}
+
+.badge.bg-secondary {
+    background: var(--text-secondary, #6c757d) !important;
+}
+
+/* Course Grade Styling */
+.course-grade {
+    border-radius: 8px;
+    padding: 0.25rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.grade-a { background: var(--success-color, #2da44e); color: white; }
+.grade-b { background: var(--info-color, #58a6ff); color: white; }
+.grade-c { background: var(--warning-color, #bf8700); color: white; }
+.grade-d { background: var(--danger-color, #f85149); color: white; }
+.grade-f { background: #6c757d; color: white; }
+
+/* Modern Timeline Styles */
 .timeline {
     position: relative;
-    padding-left: 30px;
+    padding-left: 40px;
 }
 
 .timeline-item {
     position: relative;
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
 
 .timeline-item:last-child {
@@ -1013,45 +1479,59 @@
 
 .timeline-marker {
     position: absolute;
-    left: -30px;
-    width: 20px;
-    height: 20px;
+    left: -40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    background-color: #e9ecef;
+    background: var(--border-color, #e9ecef);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    color: #6c757d;
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6c757d);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 2;
 }
 
 .timeline-marker.completed {
-    background-color: #10b981;
+    background: var(--success-color, linear-gradient(135deg, #2da44e, #3fb950));
     color: white;
+    box-shadow: 0 4px 15px rgba(45, 164, 78, 0.4);
 }
 
 .timeline-marker.active {
-    background-color: #3b82f6;
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
     color: white;
+    box-shadow: 0 4px 15px rgba(33, 136, 255, 0.4);
 }
 
 .timeline-marker.upcoming {
-    background-color: #6c757d;
+    background: var(--text-secondary, #6c757d);
     color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
 }
 
 .timeline-item::before {
     content: '';
     position: absolute;
-    left: -21px;
-    top: 20px;
-    height: calc(100% - 20px);
+    left: -25px;
+    top: 32px;
+    height: calc(100% - 32px);
     width: 2px;
-    background-color: #e9ecef;
+    background: linear-gradient(to bottom, var(--primary-color, #2188ff), var(--border-color, #e9ecef));
+    z-index: 1;
 }
 
 .timeline-item:last-child::before {
     display: none;
+}
+
+.timeline-content {
+    background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+    padding: 1.5rem;
+    border-radius: 16px;
+    border-left: 4px solid var(--primary-color, #2188ff);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 /* Career Timeline Styles */
@@ -1064,15 +1544,16 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 20px;
+    left: 30px;
     width: 4px;
-    background-color: #e9ecef;
+    background: linear-gradient(to bottom, var(--primary-color, #2188ff), var(--success-color, #2da44e));
+    border-radius: 2px;
 }
 
 .timeline-event {
     position: relative;
-    padding-left: 60px;
-    margin-bottom: 40px;
+    padding-left: 80px;
+    margin-bottom: 50px;
 }
 
 .timeline-event:last-child {
@@ -1081,97 +1562,1185 @@
 
 .timeline-dot {
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 40px;
-    height: 40px;
+    left: 10px;
+    top: 5px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    z-index: 1;
+    font-size: 1.25rem;
+    z-index: 2;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.timeline-content {
+    background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid var(--primary-color, #2188ff);
 }
 
 .timeline-date {
     font-size: 0.875rem;
-    color: #6c757d;
-    margin-bottom: 5px;
+    color: var(--text-secondary, #6c757d);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Dark Mode Adjustments */
-[data-theme="dark"] .card {
-    background-color: #1e293b;
-    border-color: #334155;
+/* Modern Skill Cards */
+.skill-card,
+.achievement-card,
+.certificate-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 16px !important;
+    overflow: hidden;
+    position: relative;
 }
 
-[data-theme="dark"] .card-header {
-    background-color: #1e293b !important;
-    border-color: #334155;
+.skill-card::before,
+.achievement-card::before,
+.certificate-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-gradient, linear-gradient(90deg, #2188ff, #0969da));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-[data-theme="dark"] .bg-light {
-    background-color: #334155 !important;
+.skill-card:hover,
+.achievement-card:hover,
+.certificate-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.skill-card:hover::before,
+.achievement-card:hover::before,
+.certificate-card:hover::before {
+    opacity: 1;
+}
+
+/* Modern Table Styling */
+.table {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.table thead th {
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-color: var(--border-color, #e9ecef);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(33, 136, 255, 0.05);
+}
+
+/* Icon Backgrounds */
+.rounded-circle.bg-primary.bg-opacity-10 {
+    background: rgba(33, 136, 255, 0.1) !important;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rounded-circle.bg-success.bg-opacity-10 {
+    background: rgba(45, 164, 78, 0.1) !important;
+}
+
+.rounded-circle.bg-warning.bg-opacity-10 {
+    background: rgba(191, 135, 0, 0.1) !important;
+}
+
+.rounded-circle.bg-info.bg-opacity-10 {
+    background: rgba(88, 166, 255, 0.1) !important;
+}
+
+/* Modal Improvements */
+.modal-content {
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.modal-header {
+    background: var(--card-gradient, linear-gradient(145deg, #ffffff, #f8fafc));
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+/* Form Improvements */
+.form-control,
+.form-select {
+    border: 2px solid var(--border-color, #e9ecef);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: var(--card-bg, white);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color, #2188ff);
+    box-shadow: 0 0 0 3px rgba(33, 136, 255, 0.1);
+    background: var(--card-bg, white);
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary, #212529);
+    margin-bottom: 0.75rem;
+}
+
+/* Empty State Styling */
+.text-center.py-4 {
+    padding: 3rem 2rem !important;
+}
+
+.text-center.py-4 .rounded-circle {
+    width: 80px !important;
+    height: 80px !important;
+    background: var(--border-color, #e9ecef) !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* Animation Enhancements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Staggered animation delays */
+.tab-pane .card:nth-child(1) { animation-delay: 0.1s; }
+.tab-pane .card:nth-child(2) { animation-delay: 0.2s; }
+.tab-pane .card:nth-child(3) { animation-delay: 0.3s; }
+.tab-pane .card:nth-child(4) { animation-delay: 0.4s; }
+
+/* TARGETED TEXT FIXES - ONLY FOR MAIN CONTENT */
+
+/* Target only the main content area, not sidebar or header */
+.container-fluid .bg-gradient-primary h1,
+.container-fluid .bg-gradient-primary .display-5 {
+    color: #000000 !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 255, 255, 0.7) !important;
+    font-weight: 800 !important;
+}
+
+.container-fluid .bg-gradient-primary .lead,
+.container-fluid .bg-gradient-primary p:first-of-type {
+    color: #000000 !important;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8), 0 0 24px rgba(255, 255, 255, 0.6) !important;
+    font-weight: 500 !important;
+}
+
+/* Specific styling for university and major info - ONLY in main content */
+.container-fluid .bg-gradient-primary .d-flex.align-items-center span,
+.container-fluid .bg-gradient-primary .col-lg-4 span {
+    color: #FFD700 !important;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+/* Target only progress tracker content area */
+.container-fluid .row .col-12:not(.main-header *) h1,
+.container-fluid .row .col-12:not(.main-header *) h2,
+.container-fluid .row .col-12:not(.main-header *) h3,
+.container-fluid .row .col-12:not(.main-header *) h4,
+.container-fluid .row .col-12:not(.main-header *) h5,
+.container-fluid .row .col-12:not(.main-header *) h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Target only tab content and cards in main content */
+.tab-content h1, .tab-content h2, .tab-content h3,
+.tab-content h4, .tab-content h5, .tab-content h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.tab-content p, .tab-content span, .tab-content div:not(.progress):not(.badge):not(.timeline-marker) {
+    color: #000000 !important;
+}
+
+/* Target only cards in the main content area */
+.container-fluid .card h1, .container-fluid .card h2, .container-fluid .card h3,
+.container-fluid .card h4, .container-fluid .card h5, .container-fluid .card h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.container-fluid .card p, .container-fluid .card span, 
+.container-fluid .card div:not(.progress):not(.badge):not(.timeline-marker) {
+    color: #000000 !important;
+}
+
+.container-fluid .card-title {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.container-fluid .card-text {
+    color: #000000 !important;
+}
+
+/* Target only card headers in main content */
+.container-fluid .card-header h3,
+.container-fluid .card-header h4,
+.container-fluid .card-header h5 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Target only navigation tabs in main content */
+.container-fluid .nav-tabs .nav-link {
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+.container-fluid .nav-tabs .nav-link:hover {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+.container-fluid .nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+    font-weight: 700 !important;
+}
+
+/* Target only progress circles in main content */
+.container-fluid .progress-circle-content .h3 {
+    color: #000000 !important;
+    font-weight: 800 !important;
+}
+
+.container-fluid .progress-circle-content .small {
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+/* Target only timeline content in main content */
+.container-fluid .timeline-content h4, 
+.container-fluid .timeline-content h5, 
+.container-fluid .timeline-content h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.container-fluid .timeline-content p, 
+.container-fluid .timeline-content span {
+    color: #000000 !important;
+}
+
+/* Target only tables in main content */
+.container-fluid .table td, 
+.container-fluid .table th:not(thead th) {
+    color: #000000 !important;
+}
+
+/* Keep white text only for table headers with gradient */
+.container-fluid .table thead th {
+    color: white !important;
+}
+
+/* Target only forms in main content */
+.container-fluid .form-label {
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+.container-fluid .form-text {
+    color: #333333 !important;
+}
+
+/* Target only modals */
+.modal-content .modal-body h1, .modal-content .modal-body h2, .modal-content .modal-body h3,
+.modal-content .modal-body h4, .modal-content .modal-body h5, .modal-content .modal-body h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.modal-content .modal-body p, .modal-content .modal-body span, 
+.modal-content .modal-body div:not(.progress):not(.badge) {
+    color: #000000 !important;
+}
+
+.modal-content .modal-title {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Target only empty states in main content */
+.container-fluid .text-center.py-4 p {
+    color: #000000 !important;
+}
+
+/* Target only skill/achievement cards in main content */
+.container-fluid .achievement-card .card-body h4,
+.container-fluid .achievement-card .card-body h5,
+.container-fluid .achievement-card .card-body h6,
+.container-fluid .skill-card .card-body h4,
+.container-fluid .skill-card .card-body h5,
+.container-fluid .skill-card .card-body h6,
+.container-fluid .certificate-card .card-body h4,
+.container-fluid .certificate-card .card-body h5,
+.container-fluid .certificate-card .card-body h6 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+.container-fluid .achievement-card .card-body p,
+.container-fluid .achievement-card .card-body span,
+.container-fluid .skill-card .card-body p,
+.container-fluid .skill-card .card-body span,
+.container-fluid .certificate-card .card-body p,
+.container-fluid .certificate-card .card-body span {
+    color: #000000 !important;
+}
+
+/* Target muted text only in main content */
+.container-fluid .text-muted, 
+.container-fluid .small, 
+.container-fluid small {
+    color: #333333 !important;
+}
+
+.container-fluid .timeline-date {
+    color: #333333 !important;
+    font-weight: 600 !important;
+}
+
+/* Target outline buttons only in main content */
+.container-fluid .btn-outline-primary {
+    color: #000000 !important;
+    border-color: var(--primary-color, #2188ff) !important;
+    background: transparent !important;
+}
+
+.container-fluid .btn-outline-primary:hover {
+    background: var(--primary-color, #2188ff) !important;
+    color: white !important;
+}
+
+/* Keep badges and primary buttons with white text */
+.badge {
+    color: white !important;
+}
+
+.btn-primary {
+    color: white !important;
+}
+
+/* Target links only in main content */
+.container-fluid a:not(.btn) {
+    color: var(--primary-color, #2188ff) !important;
+    font-weight: 500 !important;
+}
+
+.container-fluid a:not(.btn):hover {
+    color: var(--primary-hover, #1f6feb) !important;
+}
+
+/* DO NOT AFFECT SIDEBAR OR HEADER */
+/* These remain with default theme colors */
+.sidebar, .sidebar *, 
+.main-header, .main-header *,
+.brand-name,
+.nav-link {
+    /* Keep original theme colors - no overrides */
+}
+
+/* Dark theme adjustments - only for main content */
+[data-theme="dark"] .container-fluid .card h1, 
+[data-theme="dark"] .container-fluid .card h2, 
+[data-theme="dark"] .container-fluid .card h3, 
+[data-theme="dark"] .container-fluid .card h4, 
+[data-theme="dark"] .container-fluid .card h5, 
+[data-theme="dark"] .container-fluid .card h6,
+[data-theme="dark"] .container-fluid .card p, 
+[data-theme="dark"] .container-fluid .card span,
+[data-theme="dark"] .tab-content h1, [data-theme="dark"] .tab-content h2, [data-theme="dark"] .tab-content h3,
+[data-theme="dark"] .tab-content h4, [data-theme="dark"] .tab-content h5, [data-theme="dark"] .tab-content h6,
+[data-theme="dark"] .tab-content p, [data-theme="dark"] .tab-content span,
+[data-theme="dark"] .container-fluid .progress-circle-content .h3, 
+[data-theme="dark"] .container-fluid .progress-circle-content .small,
+[data-theme="dark"] .container-fluid .timeline-content h4, 
+[data-theme="dark"] .container-fluid .timeline-content h5, 
+[data-theme="dark"] .container-fluid .timeline-content h6,
+[data-theme="dark"] .container-fluid .timeline-content p, 
+[data-theme="dark"] .container-fluid .timeline-content span,
+[data-theme="dark"] .container-fluid .table td,
+[data-theme="dark"] .container-fluid .form-label,
+[data-theme="dark"] .modal-content .modal-title,
+[data-theme="dark"] .modal-content .modal-body h1, 
+[data-theme="dark"] .modal-content .modal-body h2, 
+[data-theme="dark"] .modal-content .modal-body h3,
+[data-theme="dark"] .modal-content .modal-body h4, 
+[data-theme="dark"] .modal-content .modal-body h5, 
+[data-theme="dark"] .modal-content .modal-body h6,
+[data-theme="dark"] .modal-content .modal-body p, 
+[data-theme="dark"] .modal-content .modal-body span {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .container-fluid .text-muted, 
+[data-theme="dark"] .container-fluid .small, 
+[data-theme="dark"] .container-fluid small,
+[data-theme="dark"] .container-fluid .timeline-date, 
+[data-theme="dark"] .container-fluid .form-text {
+    color: #333333 !important;
+}
+
+[data-theme="dark"] .container-fluid .nav-tabs .nav-link {
+    color: #000000 !important;
+}
+
+[data-theme="dark"] .container-fluid .nav-tabs .nav-link:hover,
+[data-theme="dark"] .container-fluid .nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+/* Fix notification icon contrast issues */
+.notification-icon {
+    background: rgba(33, 136, 255, 0.1) !important;
+    border: 2px solid rgba(33, 136, 255, 0.2) !important;
+}
+
+.notification-icon:hover {
+    background: rgba(33, 136, 255, 0.15) !important;
+    border-color: rgba(33, 136, 255, 0.3) !important;
+}
+
+.notification-icon i.fas.fa-bell {
+    color: var(--primary-color, #2188ff) !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="dark"] .notification-icon {
+    background: rgba(33, 136, 255, 0.15) !important;
+    border-color: rgba(33, 136, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .notification-icon:hover {
+    background: rgba(33, 136, 255, 0.25) !important;
+    border-color: rgba(33, 136, 255, 0.4) !important;
+}
+
+/* Fix theme toggle visibility */
+.theme-toggle-icon .form-check-input {
+    width: 50px !important;
+    height: 26px !important;
+    background-color: #6c757d !important;
+    border: 2px solid #495057 !important;
+    opacity: 1 !important;
+}
+
+.theme-toggle-icon .form-check-input:checked {
+    background-color: var(--primary-color, #2188ff) !important;
+    border-color: var(--primary-color, #2188ff) !important;
+}
+
+[data-theme="dark"] .theme-toggle-icon .form-check-input {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .theme-toggle-icon .form-check-input:checked {
+    background-color: var(--primary-color, #2188ff) !important;
+    border-color: var(--primary-color, #2188ff) !important;
+}
+
+/* Fix all card headers and content visibility */
+.card-header h3,
+.card-header h4,
+.card-header h5 {
+    color: var(--text-primary, #212529) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .card-header h3,
+[data-theme="dark"] .card-header h4,
+[data-theme="dark"] .card-header h5 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Fix navigation tab text */
+.nav-tabs .nav-link {
+    color: var(--text-secondary, #6c757d) !important;
+    font-weight: 600 !important;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .nav-tabs .nav-link {
+    color: var(--text-secondary, #8b949e) !important;
+}
+
+[data-theme="dark"] .nav-tabs .nav-link:hover,
+[data-theme="dark"] .nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+/* Fix all text in cards to be visible */
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.card p, .card span, .card div:not(.progress):not(.badge) {
+    color: var(--text-primary, #212529) !important;
+}
+
+[data-theme="dark"] .card h1, 
+[data-theme="dark"] .card h2, 
+[data-theme="dark"] .card h3, 
+[data-theme="dark"] .card h4, 
+[data-theme="dark"] .card h5, 
+[data-theme="dark"] .card h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .card p, 
+[data-theme="dark"] .card span, 
+[data-theme="dark"] .card div:not(.progress):not(.badge) {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Fix progress circle text */
+.progress-circle-content .h3,
+.progress-circle-content .small {
+    color: var(--text-primary, #212529) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .progress-circle-content .h3,
+[data-theme="dark"] .progress-circle-content .small {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Fix button text visibility */
+.btn-outline-primary {
+    color: var(--primary-color, #2188ff) !important;
+    border-color: var(--primary-color, #2188ff) !important;
+    background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color, #2188ff) !important;
+    color: white !important;
+}
+
+/* Fix table text visibility */
+.table td {
+    color: var(--text-primary, #212529) !important;
+}
+
+[data-theme="dark"] .table td {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Fix empty state text */
+.text-center.py-4 p {
+    color: var(--text-primary, #212529) !important;
+}
+
+[data-theme="dark"] .text-center.py-4 p {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Force all text elements to have proper colors */
+* {
+    color: inherit;
+}
+
+/* Override any Bootstrap defaults that might be causing issues */
+.text-dark {
+    color: var(--text-primary, #212529) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Fix any remaining white text issues */
+.container-fluid h1:not(.bg-gradient-primary h1),
+.container-fluid h2:not(.bg-gradient-primary h2),
+.container-fluid h3:not(.bg-gradient-primary h3),
+.container-fluid h4:not(.bg-gradient-primary h4),
+.container-fluid h5:not(.bg-gradient-primary h5),
+.container-fluid h6:not(.bg-gradient-primary h6) {
+    color: var(--text-primary, #212529) !important;
+}
+
+[data-theme="dark"] .container-fluid h1:not(.bg-gradient-primary h1),
+[data-theme="dark"] .container-fluid h2:not(.bg-gradient-primary h2),
+[data-theme="dark"] .container-fluid h3:not(.bg-gradient-primary h3),
+[data-theme="dark"] .container-fluid h4:not(.bg-gradient-primary h4),
+[data-theme="dark"] .container-fluid h5:not(.bg-gradient-primary h5),
+[data-theme="dark"] .container-fluid h6:not(.bg-gradient-primary h6) {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+/* Card text visibility */
+.card-body h1, .card-body h2, .card-body h3, 
+.card-body h4, .card-body h5, .card-body h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.card-body p, .card-body span, .card-body div {
+    color: var(--text-primary, #212529) !important;
+}
+
+.card-title {
+    color: var(--text-primary, #212529) !important;
+    font-weight: 700 !important;
+}
+
+.card-text {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Timeline content text */
+.timeline-content h4, .timeline-content h5, .timeline-content h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.timeline-content p, .timeline-content span {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Table text visibility */
+.table td, .table th {
+    color: var(--text-primary, #212529) !important;
+}
+
+.table thead th {
+    color: white !important; /* Keep white for gradient headers */
+}
+
+/* Form labels and text */
+.form-label {
+    color: var(--text-primary, #212529) !important;
+}
+
+.form-text {
+    color: var(--text-secondary, #6c757d) !important;
+}
+
+/* Achievement and skill card text */
+.achievement-card .card-body h4,
+.achievement-card .card-body h5,
+.achievement-card .card-body h6,
+.skill-card .card-body h4,
+.skill-card .card-body h5,
+.skill-card .card-body h6,
+.certificate-card .card-body h4,
+.certificate-card .card-body h5,
+.certificate-card .card-body h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.achievement-card .card-body p,
+.achievement-card .card-body span,
+.skill-card .card-body p,
+.skill-card .card-body span,
+.certificate-card .card-body p,
+.certificate-card .card-body span {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Progress circle text */
+.progress-circle-content .h3 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.progress-circle-content .small {
+    color: var(--text-secondary, #6c757d) !important;
+}
+
+/* Tab content text */
+.tab-pane h4, .tab-pane h5, .tab-pane h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.tab-pane p, .tab-pane span, .tab-pane div {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Modal text */
+.modal-body h1, .modal-body h2, .modal-body h3,
+.modal-body h4, .modal-body h5, .modal-body h6 {
+    color: var(--text-primary, #212529) !important;
+}
+
+.modal-body p, .modal-body span, .modal-body div {
+    color: var(--text-primary, #212529) !important;
+}
+
+.modal-title {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Dropdown text */
+.dropdown-menu .dropdown-item {
+    color: var(--text-primary, #212529) !important;
+}
+
+/* Badge text visibility - ensure contrast */
+.badge {
+    color: white !important; /* Force white text on colored backgrounds */
+}
+
+/* Small text elements */
+.small, small {
+    color: var(--text-secondary, #6c757d) !important;
+}
+
+/* Lead text */
+.lead {
+    color: inherit !important; /* Inherit from parent for hero section */
+}
+
+/* Dark Theme Text Fixes */
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] h5, 
+[data-theme="dark"] h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] p, 
+[data-theme="dark"] span, 
+[data-theme="dark"] div, 
+[data-theme="dark"] li, 
+[data-theme="dark"] td {
+    color: var(--text-primary, #c9d1d9) !important;
 }
 
 [data-theme="dark"] .text-muted {
-    color: #94a3b8 !important;
+    color: var(--text-secondary, #8b949e) !important;
 }
 
-[data-theme="dark"] .list-group-item {
-    background-color: #1e293b;
-    border-color: #334155;
-    color: #f8fafc;
+[data-theme="dark"] .card-body h1, 
+[data-theme="dark"] .card-body h2, 
+[data-theme="dark"] .card-body h3,
+[data-theme="dark"] .card-body h4, 
+[data-theme="dark"] .card-body h5, 
+[data-theme="dark"] .card-body h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .card-body p, 
+[data-theme="dark"] .card-body span, 
+[data-theme="dark"] .card-body div {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .card-title {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .card-text {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .timeline-content h4, 
+[data-theme="dark"] .timeline-content h5, 
+[data-theme="dark"] .timeline-content h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .timeline-content p, 
+[data-theme="dark"] .timeline-content span {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .table td {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .table thead th {
+    color: white !important; /* Keep white for visibility on gradient */
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .form-text {
+    color: var(--text-secondary, #8b949e) !important;
+}
+
+[data-theme="dark"] .achievement-card .card-body h4,
+[data-theme="dark"] .achievement-card .card-body h5,
+[data-theme="dark"] .achievement-card .card-body h6,
+[data-theme="dark"] .skill-card .card-body h4,
+[data-theme="dark"] .skill-card .card-body h5,
+[data-theme="dark"] .skill-card .card-body h6,
+[data-theme="dark"] .certificate-card .card-body h4,
+[data-theme="dark"] .certificate-card .card-body h5,
+[data-theme="dark"] .certificate-card .card-body h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .achievement-card .card-body p,
+[data-theme="dark"] .achievement-card .card-body span,
+[data-theme="dark"] .skill-card .card-body p,
+[data-theme="dark"] .skill-card .card-body span,
+[data-theme="dark"] .certificate-card .card-body p,
+[data-theme="dark"] .certificate-card .card-body span {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .progress-circle-content .h3 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .progress-circle-content .small {
+    color: var(--text-secondary, #8b949e) !important;
+}
+
+[data-theme="dark"] .tab-pane h4, 
+[data-theme="dark"] .tab-pane h5, 
+[data-theme="dark"] .tab-pane h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .tab-pane p, 
+[data-theme="dark"] .tab-pane span, 
+[data-theme="dark"] .tab-pane div {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .modal-body h1, 
+[data-theme="dark"] .modal-body h2, 
+[data-theme="dark"] .modal-body h3,
+[data-theme="dark"] .modal-body h4, 
+[data-theme="dark"] .modal-body h5, 
+[data-theme="dark"] .modal-body h6 {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .modal-body p, 
+[data-theme="dark"] .modal-body span, 
+[data-theme="dark"] .modal-body div {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .modal-title {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .dropdown-menu .dropdown-item {
+    color: var(--text-primary, #c9d1d9) !important;
+}
+
+[data-theme="dark"] .small, 
+[data-theme="dark"] small {
+    color: var(--text-secondary, #8b949e) !important;
+}
+
+/* Special cases for white text on colored backgrounds */
+.bg-gradient-primary h1,
+.bg-gradient-primary h2,
+.bg-gradient-primary h3,
+.bg-gradient-primary h4,
+.bg-gradient-primary h5,
+.bg-gradient-primary h6,
+.bg-gradient-primary p,
+.bg-gradient-primary span,
+.bg-gradient-primary div {
+    color: white !important;
+}
+
+/* Ensure icons inherit proper colors */
+.fas, .far, .fab {
+    color: inherit;
+}
+
+/* Navigation tab text */
+.nav-tabs .nav-link {
+    color: var(--text-secondary, #6c757d) !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+[data-theme="dark"] .nav-tabs .nav-link {
+    color: var(--text-secondary, #8b949e) !important;
+}
+
+[data-theme="dark"] .nav-tabs .nav-link.active {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+/* Button text visibility */
+.btn {
+    color: inherit !important;
+}
+
+.btn-primary {
+    color: white !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+.btn-outline-primary:hover {
+    color: white !important;
+}
+
+/* Link colors */
+a:not(.btn) {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+a:not(.btn):hover {
+    color: var(--primary-hover, #1f6feb) !important;
+}
+
+[data-theme="dark"] a:not(.btn) {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+[data-theme="dark"] a:not(.btn):hover {
+    color: #58a6ff !important;
+}
+
+[data-theme="dark"] .card {
+    background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d)) !important;
+    color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .card-header {
+    background: transparent !important;
+    border-color: var(--border-color, #30363d);
+    color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .nav-tabs {
+    border-color: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link {
+    color: var(--text-secondary, #8b949e);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link:hover {
+    background: rgba(33, 136, 255, 0.1);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link.active {
+    background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+    color: var(--primary-color, #2188ff);
+}
+
+[data-theme="dark"] .progress {
+    background: var(--border-color, #30363d) !important;
+}
+
+[data-theme="dark"] .progress-circle svg circle:first-child {
+    stroke: var(--border-color, #30363d);
+}
+
+[data-theme="dark"] .progress-circle-content .h3 {
+    color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .timeline-content {
+    background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+    color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .timeline-marker {
+    background: var(--border-color, #30363d);
+    color: var(--text-secondary, #8b949e);
+}
+
+[data-theme="dark"] .timeline-ruler {
+    background: linear-gradient(to bottom, var(--primary-color, #2188ff), var(--success-color, #3fb950));
 }
 
 [data-theme="dark"] .table {
-    color: #f8fafc;
+    color: var(--text-primary, #c9d1d9);
 }
 
-[data-theme="dark"] .table-light {
-    background-color: #334155;
-    color: #f8fafc;
+[data-theme="dark"] .table thead th {
+    background: var(--primary-gradient, linear-gradient(135deg, #2188ff, #0969da));
+}
+
+[data-theme="dark"] .table tbody td {
+    border-color: var(--border-color, #30363d);
 }
 
 [data-theme="dark"] .table-hover tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: rgba(33, 136, 255, 0.1);
 }
 
 [data-theme="dark"] .modal-content {
-    background-color: #1e293b;
-    border-color: #334155;
+    background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+    color: var(--text-primary, #c9d1d9);
+}
+
+[data-theme="dark"] .modal-header {
+    background: var(--card-gradient, linear-gradient(145deg, #21262d, #30363d));
+    border-color: var(--border-color, #30363d);
 }
 
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select {
-    background-color: #0f172a;
-    border-color: #334155;
-    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-color, #30363d);
+    color: var(--text-primary, #c9d1d9);
 }
 
-[data-theme="dark"] .timeline-marker {
-    background-color: #334155;
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary-color, #2188ff);
+    color: var(--text-primary, #c9d1d9);
 }
 
-[data-theme="dark"] .timeline-item::before,
-[data-theme="dark"] .timeline-ruler {
-    background-color: #334155;
+[data-theme="dark"] .form-label {
+    color: var(--text-primary, #c9d1d9);
 }
 
-[data-theme="dark"] .bg-primary.bg-opacity-10 {
-    background-color: rgba(59, 130, 246, 0.2) !important;
+[data-theme="dark"] .text-center.py-4 .rounded-circle {
+    background: var(--border-color, #30363d) !important;
 }
 
-[data-theme="dark"] .bg-success.bg-opacity-10 {
-    background-color: rgba(16, 185, 129, 0.2) !important;
+[data-theme="dark"] .rounded-circle.bg-primary.bg-opacity-10 {
+    background: rgba(33, 136, 255, 0.2) !important;
 }
 
-[data-theme="dark"] .bg-warning.bg-opacity-10 {
-    background-color: rgba(249, 115, 22, 0.2) !important;
+[data-theme="dark"] .rounded-circle.bg-success.bg-opacity-10 {
+    background: rgba(63, 185, 80, 0.2) !important;
 }
 
-[data-theme="dark"] .bg-info.bg-opacity-10 {
-    background-color: rgba(14, 165, 233, 0.2) !important;
+[data-theme="dark"] .rounded-circle.bg-warning.bg-opacity-10 {
+    background: rgba(210, 153, 34, 0.2) !important;
+}
+
+[data-theme="dark"] .rounded-circle.bg-info.bg-opacity-10 {
+    background: rgba(88, 166, 255, 0.2) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .progress-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .progress-circle-content .h3 {
+        font-size: 1.75rem;
+    }
+    
+    .timeline-event {
+        padding-left: 60px;
+    }
+    
+    .timeline-dot {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .nav-tabs .nav-link i {
+        display: none;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .timeline-content {
+        padding: 1rem;
+    }
+    
+    .progress-circle {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .progress-circle-content .h3 {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .bg-gradient-primary .card-body {
+        padding: 1.5rem 1rem !important;
+    }
+    
+    .bg-gradient-primary h1 {
+        font-size: 2rem;
+    }
+    
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .nav-tabs .nav-link {
+        flex: 1;
+        text-align: center;
+        min-width: 0;
+    }
 }
 </style>
 {% endblock %}

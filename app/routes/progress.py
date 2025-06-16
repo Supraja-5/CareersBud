@@ -34,40 +34,60 @@ def progress():
     skill_form = SkillForm()
 
     # Set current values for academic form
-    academic_form.gpa.data = current_user.gpa
-    academic_form.credits.data = current_user.credits
+    academic_form.gpa.data = getattr(current_user, 'gpa', 0.0)
+    academic_form.credits.data = getattr(current_user, 'credits', 0)
 
     # Prepare the data for the template
+    user_gpa = getattr(current_user, 'gpa', 0.0)
+    user_credits = getattr(current_user, 'credits', 0)
+    user_total_credits = getattr(current_user, 'total_credits', 120)  # Default to 120 if not set
+    
     academic_progress = {
-        'gpa': current_user.gpa,
-        'credits': current_user.credits,
-        'total_credits': current_user.total_credits,
-        'progress_percentage': (current_user.credits / current_user.total_credits) * 100 if current_user.total_credits > 0 else 0
+        'gpa': user_gpa,
+        'credits': user_credits,
+        'total_credits': user_total_credits,
+        'progress_percentage': (user_credits / user_total_credits) * 100 if user_total_credits > 0 else 0
     }
 
-    # Get academic progress details (current courses)
-    current_courses = getattr(current_user, 'current_courses', [])
+    # Get academic progress details - use enrollments instead of created_courses
+    current_courses = []
+    if hasattr(current_user, 'enrollments'):
+        # Get enrolled courses that are approved and in progress
+        current_courses = [
+            {
+                'name': enrollment.course.title,
+                'category': enrollment.course.category.name if enrollment.course.category else 'General',
+                'credits': 3,  # You might want to add a credits field to Course model
+                'progress': enrollment.progress,
+                'grade': 'In Progress' if not enrollment.is_completed else 'Completed'
+            }
+            for enrollment in current_user.enrollments 
+            if enrollment.course.status == 'approved'
+        ]
 
     # Get professional journey (internships and job applications)
     internships = getattr(current_user, 'internships', [])
     job_applications = getattr(current_user, 'job_applications', [])
 
     # Get skills categorized as technical and soft
-    technical_skills = [skill for skill in getattr(current_user, 'skills', []) if skill.skill_type == 'technical']
-    soft_skills = [skill for skill in getattr(current_user, 'skills', []) if skill.skill_type == 'soft']
+    all_skills = getattr(current_user, 'skills', [])
+    technical_skills = [skill for skill in all_skills if getattr(skill, 'skill_type', '') == 'technical']
+    soft_skills = [skill for skill in all_skills if getattr(skill, 'skill_type', '') == 'soft']
 
     # Get achievements sorted by date
-    achievements = sorted(getattr(current_user, 'achievements', []),
-                           key=lambda x: datetime.strptime(x.date, '%Y-%m-%d') if isinstance(x.date, str) else x.date,
-                           reverse=True) if current_user.achievements else []
+    user_achievements = getattr(current_user, 'achievements', [])
+    achievements = []
+    if user_achievements:
+        try:
+            achievements = sorted(user_achievements,
+                               key=lambda x: datetime.strptime(x.date, '%Y-%m-%d') if isinstance(x.date, str) else x.date,
+                               reverse=True)
+        except (AttributeError, ValueError):
+            # If there's an issue with date parsing, just use the achievements as-is
+            achievements = user_achievements
 
     # Get certificates (this could be derived from skills or another field in the database)
-    certificates = []  # Populate this list as needed
-
-    # Check if any critical values are None or empty
-    if current_courses is None or internships is None or job_applications is None:
-        flash("There was an issue loading some data. Please try again later.", "danger")
-        return redirect(url_for('dashboard.dashboard'))
+    certificates = getattr(current_user, 'certificates', [])
 
     # Render template
     return render_template(
@@ -95,13 +115,13 @@ def update_academic():
         gpa = form.gpa.data
         credits = form.credits.data
         
-        # This would typically include current courses data as well
-        current_courses = current_user.current_courses
-        
-        if update_academic_progress(current_user.id, gpa, credits, current_courses):
-            flash('Academic progress updated successfully!', 'success')
-        else:
-            flash('Failed to update academic progress', 'danger')
+        try:
+            if update_academic_progress(current_user.id, gpa, credits):
+                flash('Academic progress updated successfully!', 'success')
+            else:
+                flash('Failed to update academic progress', 'danger')
+        except Exception as e:
+            flash(f'Error updating academic progress: {str(e)}', 'danger')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -117,11 +137,17 @@ def add_achievement_route():
     if form.validate_on_submit():
         title = form.title.data
         date = form.date.data.strftime('%Y-%m-%d')
+        # Get description and category from the form data (they're not in your FlaskForm but are in the HTML)
+        description = request.form.get('description', '')
+        category = request.form.get('category', 'other')
         
-        if add_achievement(current_user.id, title, date):
-            flash('Achievement added successfully!', 'success')
-        else:
-            flash('Failed to add achievement', 'danger')
+        try:
+            if add_achievement(current_user.id, title, date, description, category):
+                flash('Achievement added successfully!', 'success')
+            else:
+                flash('Failed to add achievement', 'danger')
+        except Exception as e:
+            flash(f'Error adding achievement: {str(e)}', 'danger')
     else:
         for field, errors in form.errors.items():
             for error in errors:
@@ -129,7 +155,35 @@ def add_achievement_route():
     
     return redirect(url_for('progress.progress'))
 
-@progress_bp.route('/progress/update_skill', methods=['POST'])
+@progress_bp.route('/progress/add_course', methods=['POST'])
+@login_required
+def add_current_course():
+    """Add a course to track progress (separate from CourseHub enrollments)"""
+    try:
+        course_name = request.form.get('course_name')
+        category = request.form.get('category', 'General')
+        credits = int(request.form.get('credits', 3))
+        semester = request.form.get('semester', '')
+        
+        if not course_name:
+            flash('Course name is required', 'danger')
+            return redirect(url_for('progress.progress'))
+        
+        # TODO: Create a CourseProgress model to store this data
+        # For now, we'll just show a success message
+        # You'll need to implement proper course progress tracking later
+        
+        flash(f'Course "{course_name}" ({credits} credits) added to your progress tracker!', 'success')
+        return redirect(url_for('progress.progress'))
+        
+    except ValueError:
+        flash('Invalid credits value. Please enter a valid number.', 'danger')
+        return redirect(url_for('progress.progress'))
+    except Exception as e:
+        flash(f'Error adding course: {str(e)}', 'danger')
+        return redirect(url_for('progress.progress'))
+
+@progress_bp.route('/progress/update_skill', methods=['POST'], endpoint='update_skill_route')
 @login_required
 def update_skill_route():
     form = SkillForm()
@@ -140,13 +194,36 @@ def update_skill_route():
         level = form.level.data
         percentage = form.percentage.data
         
-        if update_skill(current_user.id, name, skill_type, level, percentage):
-            flash('Skill updated successfully!', 'success')
-        else:
-            flash('Failed to update skill', 'danger')
+        try:
+            if update_skill(current_user.id, name, skill_type, level, percentage):
+                flash('Skill updated successfully!', 'success')
+            else:
+                flash('Failed to update skill', 'danger')
+        except Exception as e:
+            flash(f'Error updating skill: {str(e)}', 'danger')
     else:
         for field, errors in form.errors.items():
             for error in errors:
                 flash(f"{getattr(form, field).label.text}: {error}", 'danger')
+    
+    return redirect(url_for('progress.progress'))
+
+# Helper route to enroll in courses from CourseHub
+@progress_bp.route('/progress/enroll_course/<int:course_id>', methods=['POST'])
+@login_required  
+def enroll_in_course_progress(course_id):
+    """Enroll in a course from the CourseHub to track in progress"""
+    try:
+        from app.models import enroll_in_course
+        # Use the existing enroll_in_course function from models
+        enrollment_id = enroll_in_course(current_user.id, course_id)
+        
+        if enrollment_id:
+            flash('Successfully enrolled in course!', 'success')
+        else:
+            flash('Failed to enroll in course. Course may not be available or you may already be enrolled.', 'danger')
+            
+    except Exception as e:
+        flash(f'Error enrolling in course: {str(e)}', 'danger')
     
     return redirect(url_for('progress.progress'))

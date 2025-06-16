@@ -93,6 +93,8 @@
     margin-bottom: 20px;
     overflow: hidden;
     transition: box-shadow 0.3s ease;
+    transform: translateZ(0); /* Force hardware acceleration */
+    backface-visibility: hidden; /* Prevent flickering */
 }
 
 .post-card:hover {
@@ -119,12 +121,23 @@
     margin-top: 10px;
     border-radius: 8px;
     overflow: hidden;
+    cursor: zoom-in;
 }
 
 .post-image img {
     width: 100%;
     max-height: 500px;
     object-fit: cover;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.05));
+    transition: opacity 0.3s ease;
+}
+
+.post-image img.loading {
+    opacity: 0.7;
+}
+
+.post-image img.loaded {
+    opacity: 1;
 }
 
 /* Comment section */
@@ -231,17 +244,6 @@
     border: 1px solid var(--card-bg, white);
 }
 
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .content-wrapper {
-        padding-bottom: 70px;
-    }
-    
-    .mobile-footer {
-        display: block;
-    }
-}
-
 /* Highlight effect for posts */
 .highlight-post {
     animation: highlight-fade 2s;
@@ -282,22 +284,6 @@
 
 [data-theme="dark"] .comment-bubble {
     background-color: rgba(255, 255, 255, 0.07);
-}
-
-/* Hide welcome text on small screens */
-@media (max-width: 768px) {
-  .welcome-text h1, .welcome-text p {
-    display: none;
-  }
-  
-  .welcome-text {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  #sidebarToggle {
-    margin-top: 0 !important;
-  }
 }
 
 /* Image Modal Styles */
@@ -424,24 +410,580 @@
   border-bottom: 8px solid var(--card-bg, white);
 }
 
-/* Clickable images */
-.post-image {
-  cursor: zoom-in;
+/* MOBILE RESPONSIVE STYLES */
+
+/* Mobile Full-Screen Layout Fix */
+@media (max-width: 991.98px) {
+    /* Hide sidebar completely on mobile */
+    .col-lg-4 {
+        display: none !important;
+    }
+    
+    /* Make feed take full width */
+    .col-lg-8 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 !important;
+    }
+    
+    /* Ensure feed container uses full width */
+    .feed-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Remove margins on mobile */
+    .feed-container .row {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Adjust post creator card for mobile */
+    .post-creator-card {
+        margin: 0 0 15px 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    /* Adjust post cards for mobile */
+    .post-card {
+        margin: 0 0 15px 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    /* Show mobile footer */
+    .mobile-footer {
+        display: block !important;
+    }
+    
+    .content-wrapper {
+        padding-bottom: 70px;
+    }
+    
+    /* Remove traditional pagination on mobile */
+    .pagination {
+        display: none !important;
+    }
+    
+    /* Reduce shadows and effects on mobile for better performance */
+    .post-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    /* Optimize transitions for mobile */
+    .post-card,
+    .post-creator-card {
+        transition: box-shadow 0.2s ease !important;
+    }
+    
+    /* Reduce blur effects on mobile */
+    .mobile-footer {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
 }
 
-/* Dark mode adjustments */
+/* Mobile Header Customization for Feed Page */
+@media (max-width: 991.98px) {
+    /* Hide the original welcome text on mobile for feed pages */
+    .feed-container .welcome-text h1,
+    .feed-container .welcome-text p,
+    body[data-page="feed"] .welcome-text h1,
+    body[data-page="feed"] .welcome-text p {
+        display: none !important;
+    }
+    
+    /* Create new mobile header layout for feed */
+    body[data-page="feed"] .main-header,
+    .main-header.feed-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 12px 15px !important;
+        background: var(--card-bg, white) !important;
+        border-bottom: 1px solid var(--border-color, #e0e0e0) !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    /* Left side: Menu button */
+    body[data-page="feed"] .welcome-text,
+    .main-header.feed-header .header-left {
+        order: 1 !important;
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    /* Style the menu button - modern design */
+    body[data-page="feed"] #sidebarToggle,
+    .main-header.feed-header #sidebarToggle {
+        background: rgba(74, 222, 128, 0.1) !important;
+        border: 2px solid rgba(74, 222, 128, 0.2) !important;
+        padding: 10px !important;
+        margin: 0 !important;
+        color: #4ade80 !important;
+        font-size: 1.1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 42px !important;
+        height: 42px !important;
+        border-radius: 12px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 8px rgba(74, 222, 128, 0.15) !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    /* Add a subtle gradient background */
+    body[data-page="feed"] #sidebarToggle::before,
+    .main-header.feed-header #sidebarToggle::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1)) !important;
+        z-index: -1 !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+    }
+    
+    body[data-page="feed"] #sidebarToggle:hover,
+    .main-header.feed-header #sidebarToggle:hover {
+        background: rgba(74, 222, 128, 0.15) !important;
+        border-color: rgba(74, 222, 128, 0.4) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(74, 222, 128, 0.25) !important;
+        color: #22c55e !important;
+    }
+    
+    body[data-page="feed"] #sidebarToggle:hover::before,
+    .main-header.feed-header #sidebarToggle:hover::before {
+        opacity: 1 !important;
+    }
+    
+    body[data-page="feed"] #sidebarToggle:active,
+    .main-header.feed-header #sidebarToggle:active {
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 6px rgba(74, 222, 128, 0.2) !important;
+    }
+    
+    /* Make the hamburger icon more visible */
+    body[data-page="feed"] #sidebarToggle i,
+    .main-header.feed-header #sidebarToggle i {
+        font-weight: 600 !important;
+        z-index: 1 !important;
+    }
+    
+    /* Center: SocialBud brand name - Modern styling */
+    body[data-page="feed"] .main-header::before,
+    .main-header.feed-header::before {
+        content: "𝒮𝑜𝒸𝒾𝒶𝓁𝐵𝓊𝒹" !important;
+        order: 2 !important;
+        flex: 1 !important;
+        text-align: center !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #4ade80, #22d3ee, #a855f7) !important;
+        background-size: 200% 200% !important;
+        animation: gradientShift 3s ease infinite !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        margin: 0 15px !important;
+        letter-spacing: 0.5px !important;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        position: relative !important;
+    }
+    
+    /* Gradient animation for the brand name */
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* Add a subtle glow effect */
+    body[data-page="feed"] .main-header::after,
+    .main-header.feed-header::after {
+        content: "𝒮𝑜𝒸𝒾𝒶𝓁𝐵𝓊𝒹" !important;
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        color: transparent !important;
+        z-index: -1 !important;
+        filter: blur(8px) !important;
+        opacity: 0.3 !important;
+        background: linear-gradient(135deg, #4ade80, #22d3ee, #a855f7) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* Right side: Header icons */
+    body[data-page="feed"] .header-icons,
+    .main-header.feed-header .header-icons {
+        order: 3 !important;
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    
+    /* Adjust header icons for mobile - only notification and profile */
+    body[data-page="feed"] .header-icons > *:not(.theme-toggle-icon),
+    .main-header.feed-header .header-icons > *:not(.theme-toggle-icon) {
+        font-size: 1.2rem !important;
+        padding: 8px !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: background-color 0.2s ease !important;
+        color: var(--text-secondary, #6c757d) !important;
+    }
+    
+    body[data-page="feed"] .header-icons > *:not(.theme-toggle-icon):hover,
+    .main-header.feed-header .header-icons > *:not(.theme-toggle-icon):hover {
+        background: var(--hover-overlay, rgba(0, 0, 0, 0.05)) !important;
+    }
+    
+    /* Theme toggle adjustments - NOT USED ON FEED PAGE */
+    /* Theme toggle is handled by base.html sidebar on mobile */
+    
+    /* Notification icon adjustments */
+    body[data-page="feed"] .notification-icon,
+    .main-header.feed-header .notification-icon {
+        position: relative !important;
+        cursor: pointer !important;
+    }
+    
+    body[data-page="feed"] .notification-icon .badge,
+    .main-header.feed-header .notification-icon .badge {
+        position: absolute !important;
+        top: -2px !important;
+        right: -2px !important;
+        font-size: 0.7rem !important;
+        min-width: 16px !important;
+        height: 16px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 575.98px) {
+    .feed-container {
+        padding: 0 !important;
+    }
+    
+    /* Make cards have minimal border radius on very small screens */
+    .post-creator-card,
+    .post-card {
+        border-radius: 0 !important;
+        border: 1px solid var(--border-color, #e0e0e0) !important;
+        border-left: none !important;
+        border-right: none !important;
+        margin: 0 0 10px 0 !important;
+    }
+    
+    body[data-page="feed"] .main-header::before,
+    .main-header.feed-header::before {
+        font-size: 1.4rem !important;
+    }
+    
+    body[data-page="feed"] .header-icons,
+    .main-header.feed-header .header-icons {
+        gap: 6px !important;
+    }
+    
+    body[data-page="feed"] .header-icons > *,
+    .main-header.feed-header .header-icons > * {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 1rem !important;
+    }
+}
+
+/* INFINITE SCROLL STYLES */
+
+/* Loading indicator styling */
+.infinite-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.infinite-loading.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.infinite-loading .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 3px;
+}
+
+.loading-text {
+    margin-left: 10px;
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.9rem;
+}
+
+/* End of feed indicator */
+.feed-end-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+    margin-top: 20px;
+}
+
+.feed-end-message i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+/* Post animation when loaded */
+.post-card.new-post {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.4s ease forwards;
+}
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation for multiple posts */
+.post-card.new-post:nth-child(1) { animation-delay: 0.1s; }
+.post-card.new-post:nth-child(2) { animation-delay: 0.2s; }
+.post-card.new-post:nth-child(3) { animation-delay: 0.3s; }
+.post-card.new-post:nth-child(4) { animation-delay: 0.4s; }
+.post-card.new-post:nth-child(5) { animation-delay: 0.5s; }
+
+/* Loading skeleton for better UX */
+.post-skeleton {
+    background: var(--card-bg, white);
+    border-radius: 10px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    margin-bottom: 20px;
+    padding: 15px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes skeleton-pulse {
+    0% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+.skeleton-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.1));
+    margin-right: 12px;
+}
+
+.skeleton-text {
+    height: 12px;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.1));
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.skeleton-text.name {
+    width: 120px;
+}
+
+.skeleton-text.time {
+    width: 80px;
+    height: 10px;
+}
+
+.skeleton-content {
+    height: 60px;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.1));
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.skeleton-image {
+    height: 200px;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.1));
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.skeleton-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.skeleton-action {
+    width: 60px;
+    height: 12px;
+    background: var(--hover-overlay, rgba(0, 0, 0, 0.1));
+    border-radius: 6px;
+}
+
+/* Mobile skeleton adjustments */
+@media (max-width: 991.98px) {
+    .post-skeleton {
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        margin: 0 0 15px 0 !important;
+    }
+}
+
+/* Error state styling */
+.feed-error {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--danger-color, #ef4444);
+}
+
+.feed-error i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.retry-button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    background: var(--primary-color, #4ade80);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+    background: var(--primary-hover, #22c55e);
+}
+
+/* Performance optimizations */
+.feed-container {
+    contain: layout style paint;
+}
+
+#post-container {
+    contain: layout;
+}
+
+/* Dark mode adjustments for new elements */
 @media (prefers-color-scheme: dark) {
-  .post-interaction-popup {
+    .post-interaction-popup {
+        background: var(--card-bg, #1e293b);
+    }
+    
+    .popup-triangle {
+        border-bottom-color: var(--card-bg, #1e293b);
+    }
+    
+    .post-interaction-item {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+[data-theme="dark"] .post-interaction-popup {
     background: var(--card-bg, #1e293b);
-  }
-  
-  .popup-triangle {
+}
+
+[data-theme="dark"] .popup-triangle {
     border-bottom-color: var(--card-bg, #1e293b);
-  }
-  
-  .post-interaction-item {
+}
+
+[data-theme="dark"] .post-interaction-item {
     border-color: rgba(255, 255, 255, 0.1);
-  }
+}
+
+[data-theme="dark"] body[data-page="feed"] .main-header,
+[data-theme="dark"] .main-header.feed-header {
+    background: var(--card-bg, #1e293b) !important;
+    border-color: var(--border-color, rgba(255, 255, 255, 0.1)) !important;
+}
+
+[data-theme="dark"] body[data-page="feed"] .main-header::before,
+[data-theme="dark"] .main-header.feed-header::before {
+    background: linear-gradient(135deg, #4ade80, #22d3ee) !important;
+    background-size: 200% 200% !important;
+    animation: gradientShift 3s ease infinite !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+[data-theme="dark"] body[data-page="feed"] #sidebarToggle,
+[data-theme="dark"] .main-header.feed-header #sidebarToggle {
+    background: rgba(74, 222, 128, 0.15) !important;
+    border: 2px solid rgba(74, 222, 128, 0.3) !important;
+    color: #4ade80 !important;
+    box-shadow: 0 2px 8px rgba(74, 222, 128, 0.2) !important;
+}
+
+[data-theme="dark"] body[data-page="feed"] #sidebarToggle::before,
+[data-theme="dark"] .main-header.feed-header #sidebarToggle::before {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(34, 211, 238, 0.2)) !important;
+}
+
+[data-theme="dark"] body[data-page="feed"] #sidebarToggle:hover,
+[data-theme="dark"] .main-header.feed-header #sidebarToggle:hover {
+    background: rgba(74, 222, 128, 0.25) !important;
+    border-color: rgba(74, 222, 128, 0.5) !important;
+    color: #22c55e !important;
+    box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3) !important;
+}
+
+/* Performance optimization for mobile */
+@media (max-width: 991.98px) {
+    /* Add mobile device class for performance */
+    body.mobile-device .post-card:hover {
+        box-shadow: none !important;
+        transform: none !important;
+    }
+    
+    body.mobile-device .post-action-btn:hover {
+        background-color: transparent !important;
+    }
 }
 </style>
 
@@ -903,35 +1445,132 @@
 {% block extra_scripts %}
 <script>
 $(document).ready(function() {
-    // Define variables in the correct scope
+    // Mark this page as feed page for CSS targeting
+    document.body.setAttribute('data-page', 'feed');
+    
+    // Ensure menu button shows only bars, no text on mobile
+    function updateMobileMenuButton() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        if (sidebarToggle && window.innerWidth <= 991) {
+            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+        }
+    }
+    
+    // Call on load and resize
+    updateMobileMenuButton();
+    $(window).resize(updateMobileMenuButton);
+    
+    // Enhanced infinite scroll variables
+    let currentPage = 1;
+    let isLoading = false;
+    let hasMorePosts = true;
+    let postsPerPage = 25; // Load 25 posts per batch
+    let loadThreshold = 300; // Start loading when 300px from bottom
+    let retryCount = 0;
+    let maxRetries = 3;
+    
+    // Define variables for scroll behavior
     let lastScrollTop = 0;
-    let page = 2;
-    let loading = false;
     let scrollTimeout;
     const postCreator = $('.post-creator-card');
     const mobileFooter = $('.mobile-footer');
     const postCreatorOffset = postCreator.length > 0 ? postCreator.offset().top : 0;
-
+    
+    // Performance optimization for mobile
+    if (window.innerWidth <= 992) {
+        document.body.classList.add('mobile-device');
+        document.documentElement.style.setProperty('--animation-duration', '0.2s');
+    }
+    
     // Auto-expand textarea as user types
     $('textarea').on('input', function() {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
     });
     
+    // Create enhanced loading indicator
+    function createLoadingIndicator() {
+        return `
+            <div class="infinite-loading" id="infiniteLoading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="loading-text">Loading more posts...</span>
+            </div>
+        `;
+    }
+    
+    // Create loading skeleton
+    function createPostSkeleton(count = 3) {
+        let skeletons = '';
+        for (let i = 0; i < count; i++) {
+            skeletons += `
+                <div class="post-skeleton">
+                    <div class="skeleton-header">
+                        <div class="skeleton-avatar"></div>
+                        <div>
+                            <div class="skeleton-text name"></div>
+                            <div class="skeleton-text time"></div>
+                        </div>
+                    </div>
+                    <div class="skeleton-content"></div>
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-actions">
+                        <div class="skeleton-action"></div>
+                        <div class="skeleton-action"></div>
+                        <div class="skeleton-action"></div>
+                    </div>
+                </div>
+            `;
+        }
+        return skeletons;
+    }
+    
+    // Create error message
+    function createErrorMessage() {
+        return `
+            <div class="feed-error" id="feedError">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h5>Oops! Something went wrong</h5>
+                <p>Unable to load more posts. Please check your connection.</p>
+                <button class="retry-button" onclick="retryLoadPosts()">Try Again</button>
+            </div>
+        `;
+    }
+    
+    // Create end of feed message
+    function createEndMessage() {
+        return `
+            <div class="feed-end-message">
+                <i class="fas fa-check-circle"></i>
+                <h6>You're all caught up!</h6>
+                <p>You've seen all the latest posts. Check back later for more updates.</p>
+            </div>
+        `;
+    }
+    
+    // Add loading indicator if not exists
+    if ($('#infiniteLoading').length === 0) {
+        $('#post-container').after(createLoadingIndicator());
+    }
+    
     // Handle smooth scrolling to anchors
     if (window.location.hash) {
         const targetElement = $(window.location.hash);
         if (targetElement.length) {
-            // Wait for images to load for better positioning
             setTimeout(function() {
                 $('html, body').animate({
-                    scrollTop: targetElement.offset().top - 70 // Offset for fixed header
+                    scrollTop: targetElement.offset().top - 70
                 }, 800);
-            }, 300);
+                targetElement.addClass('highlight-post');
+                setTimeout(function() {
+                    targetElement.removeClass('highlight-post');
+                }, 2000);
+            }, 500);
         }
     }
     
-    // Image preview functionality
+    // Image preview functionality for modals
     $('#modalImage').change(function() {
         const file = this.files[0];
         const previewId = '#modalImagePreview';
@@ -953,17 +1592,19 @@ $(document).ready(function() {
         $('#modalImagePreview img').attr('src', '');
     });
     
-    // Throttled scroll handler to improve performance
-    $(window).scroll(function() {
-        if (!scrollTimeout) {
-            scrollTimeout = setTimeout(function() {
-                handleScroll();
-                scrollTimeout = null;
-            }, 50); // Small delay to reduce calculations
+    // Enhanced scroll handler with throttling
+    $(window).on('scroll', function() {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
         }
+        
+        scrollTimeout = setTimeout(function() {
+            handleScroll();
+            handleInfiniteScroll();
+        }, 50); // Throttled to 50ms for performance
     });
     
-    // Extracted scroll handling logic
+    // Extracted scroll handling logic for mobile footer and sticky elements
     function handleScroll() {
         const st = $(window).scrollTop();
         const windowHeight = $(window).height();
@@ -985,113 +1626,223 @@ $(document).ready(function() {
             postCreator.removeClass('sticky');
         }
         
-        // Infinite scroll for posts - load earlier to prevent waiting
-        if (!loading && scrollBottom >= documentHeight - 300) {
-            loadMorePosts();
-        }
-        
         lastScrollTop = st;
     }
     
-    // Extracted post loading logic
-    function loadMorePosts() {
-        loading = true;
-        $('#loading').fadeIn(200);
+    // Enhanced infinite scroll handler
+    function handleInfiniteScroll() {
+        if (isLoading || !hasMorePosts) return;
         
+        const scrollTop = $(window).scrollTop();
+        const windowHeight = $(window).height();
+        const documentHeight = $(document).height();
+        const scrollBottom = scrollTop + windowHeight;
+        
+        // Start loading when user is near the bottom
+        if (scrollBottom >= documentHeight - loadThreshold) {
+            loadMorePosts();
+        }
+    }
+    
+    // Enhanced post loading function
+    function loadMorePosts() {
+        if (isLoading || !hasMorePosts) return;
+        
+        isLoading = true;
+        currentPage++;
+        
+        // Show loading indicator
+        const loadingIndicator = $('#infiniteLoading');
+        loadingIndicator.addClass('show');
+        
+        // Show skeleton loading for better UX
+        const skeletonContainer = $('<div id="skeletonContainer">').html(createPostSkeleton(5));
+        loadingIndicator.before(skeletonContainer);
+        
+        // Make AJAX request
         $.ajax({
-            url: "{{ url_for('social.feed') }}?page=" + page,
+            url: window.location.pathname,
             type: 'GET',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            success: function(data) {
-                if (data.trim() === '') {
-                    $('#loading').fadeOut(200);
-                    return;
-                }
-                
-                // Preload any images to prevent layout shifts
-                const tempDiv = $(data);
-                const images = tempDiv.find('img');
-                
-                let imagesLoaded = 0;
-                const totalImages = images.length;
-                
-                if (totalImages === 0) {
-                    // If no images, just append content
-                    $('#post-container').append(data);
-                    $('#loading').fadeOut(200);
-                    page += 1;
-                    loading = false;
-                    
-                    // Initialize like buttons for new posts
-                    initializeLikeButtons();
-                } else {
-                    // If has images, preload them first
-                    images.each(function() {
-                        const img = new Image();
-                        img.onload = img.onerror = function() {
-                            imagesLoaded++;
-                            if (imagesLoaded === totalImages) {
-                                $('#post-container').append(data);
-                                $('#loading').fadeOut(200);
-                                page += 1;
-                                loading = false;
-                                
-                                // Initialize like buttons for new posts
-                                initializeLikeButtons();
-                            }
-                        };
-                        img.src = this.src;
-                    });
-                    
-                    // Safety timeout in case images don't load
-                    setTimeout(function() {
-                        if (loading) {
-                            $('#post-container').append(data);
-                            $('#loading').fadeOut(200);
-                            page += 1;
-                            loading = false;
-                            
-                            // Initialize like buttons for new posts
-                            initializeLikeButtons();
-                        }
-                    }, 3000);
-                }
+            data: {
+                page: currentPage,
+                per_page: postsPerPage,
+                ajax: 1
             },
-            error: function() {
-                $('#loading').fadeOut(200);
-                loading = false;
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            timeout: 10000, // 10 second timeout
+            
+            success: function(response) {
+                handleLoadSuccess(response);
+            },
+            
+            error: function(xhr, status, error) {
+                handleLoadError(xhr, status, error);
             }
         });
     }
-
-    // Function to parse URL parameters
+    
+    function handleLoadSuccess(data) {
+        // Remove skeleton
+        $('#skeletonContainer').remove();
+        
+        if (!data || data.trim() === '' || data.includes('No more posts')) {
+            // No more posts available
+            hasMorePosts = false;
+            $('#infiniteLoading').remove();
+            $('#post-container').after(createEndMessage());
+        } else {
+            // Parse and add new posts
+            const newPosts = $(data);
+            
+            // Add animation class for new posts
+            newPosts.find('.post-card').addClass('new-post');
+            
+            // Append new posts
+            $('#post-container').append(newPosts);
+            
+            // Initialize functionality for new posts
+            initializeNewPosts(newPosts);
+            
+            // Lazy load images in new posts
+            lazyLoadImages(newPosts);
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                newPosts.find('.post-card').removeClass('new-post');
+            }, 1000);
+        }
+        
+        // Hide loading indicator
+        $('#infiniteLoading').removeClass('show');
+        isLoading = false;
+        retryCount = 0; // Reset retry count on success
+        
+        // Update page title with post count
+        updatePageTitle();
+    }
+    
+    function handleLoadError(xhr, status, error) {
+        console.error('Error loading posts:', error);
+        
+        // Remove skeleton
+        $('#skeletonContainer').remove();
+        
+        // Hide loading indicator
+        $('#infiniteLoading').removeClass('show');
+        
+        if (retryCount < maxRetries) {
+            // Auto retry with exponential backoff
+            retryCount++;
+            const retryDelay = Math.pow(2, retryCount) * 1000; // 2s, 4s, 8s
+            
+            setTimeout(() => {
+                currentPage--; // Reset page counter
+                isLoading = false;
+                loadMorePosts();
+            }, retryDelay);
+        } else {
+            // Show error message after max retries
+            $('#infiniteLoading').after(createErrorMessage());
+            isLoading = false;
+        }
+    }
+    
+    // Global retry function
+    window.retryLoadPosts = function() {
+        $('#feedError').remove();
+        retryCount = 0;
+        isLoading = false;
+        loadMorePosts();
+    };
+    
+    // Initialize functionality for new posts
+    function initializeNewPosts(container) {
+        // Reinitialize like buttons
+        container.find('.like-button').off('click').on('click', handleLikeButton);
+        
+        // Reinitialize comment forms
+        container.find('.comment-form').off('submit').on('submit', handleCommentSubmit);
+        
+        // Reinitialize image modals
+        container.find('.post-image img').off('click').on('click', handleImageModal);
+        
+        // Reinitialize interaction counters
+        container.find('.interaction-counter').off('click').on('click', handleInteractionPopup);
+    }
+    
+    // Lazy loading for images
+    function lazyLoadImages(container) {
+        const images = container.find('.post-image img');
+        
+        images.each(function() {
+            const img = $(this);
+            const src = img.attr('src');
+            
+            if (src) {
+                img.addClass('loading');
+                
+                // Create new image to preload
+                const newImg = new Image();
+                newImg.onload = function() {
+                    img.removeClass('loading').addClass('loaded');
+                };
+                newImg.onerror = function() {
+                    img.removeClass('loading').addClass('error');
+                };
+                newImg.src = src;
+            }
+        });
+    }
+    
+    // Update page title with post count
+    function updatePageTitle() {
+        const postCount = $('.post-card').length;
+        if (postCount > 0) {
+            document.title = `(${postCount}) SocialBud - Feed`;
+        }
+    }
+    
+    // Memory management: Remove old posts if too many loaded
+    function manageMemory() {
+        const maxPosts = 100; // Keep maximum 100 posts in DOM
+        const posts = $('.post-card');
+        
+        if (posts.length > maxPosts) {
+            posts.slice(0, posts.length - maxPosts).remove();
+        }
+    }
+    
+    // Call memory management occasionally
+    setInterval(manageMemory, 30000); // Every 30 seconds
+    
+    // Performance optimization: Intersection Observer for better scroll detection
+    if ('IntersectionObserver' in window) {
+        const loadingTrigger = document.createElement('div');
+        loadingTrigger.id = 'loadingTrigger';
+        loadingTrigger.style.height = '1px';
+        document.querySelector('#post-container').parentNode.appendChild(loadingTrigger);
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !isLoading && hasMorePosts) {
+                    loadMorePosts();
+                }
+            });
+        }, {
+            rootMargin: '300px' // Start loading 300px before the trigger
+        });
+        
+        observer.observe(loadingTrigger);
+    }
+    
+    // Handle URL parameters for comments
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
         var results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
-    
-    // Handle smooth scrolling to anchors with a delay to ensure content is loaded
-    if (window.location.hash) {
-        const targetId = window.location.hash;
-        const targetElement = $(targetId);
-        
-        if (targetElement.length) {
-            // Wait for images and content to load
-            setTimeout(function() {
-                // Smooth scroll to the element
-                $('html, body').animate({
-                    scrollTop: targetElement.offset().top - 70 // Adjust for header height
-                }, 800);
-                
-                // Flash effect to highlight the post
-                $(targetId).addClass('highlight-post');
-                setTimeout(function() {
-                    $(targetId).removeClass('highlight-post');
-                }, 2000);
-            }, 500);
-        }
     }
     
     // If a show_comments parameter exists, expand that comments section
@@ -1111,93 +1862,83 @@ $(document).ready(function() {
     const deletePostModal = document.getElementById('deletePostModal');
     if (deletePostModal) {
         deletePostModal.addEventListener('show.bs.modal', function(event) {
-            // Button that triggered the modal
             const button = event.relatedTarget;
-            
-            // Extract post id from the button's data attribute
             const postId = button.getAttribute('data-post-id');
-            
-            // Update the form's action URL with the post id
             const form = this.querySelector('#deletePostForm');
             form.action = "{{ url_for('social.delete_post_route', post_id=0) }}".replace('/0', '/' + postId);
         });
     }
     
-    // Initialize like buttons
-    function initializeLikeButtons() {
-        $('.like-button').off('click').on('click', function(e) {
-            e.preventDefault();
+    // Like button handler
+    function handleLikeButton(e) {
+        e.preventDefault();
+        
+        const button = $(this);
+        const postId = button.data('post-id');
+        const likeCount = button.closest('.card-footer').find('.like-count');
+        const likeIcon = button.find('.like-icon');
+        
+        // Prevent multiple clicks
+        if (button.hasClass('processing')) {
+            return;
+        }
+        
+        button.addClass('processing');
+        
+        // Visual feedback immediately
+        if (button.hasClass('liked')) {
+            // Unlike action
+            likeCount.text(parseInt(likeCount.text()) - 1);
+            likeIcon.removeClass('fas').addClass('far');
+            button.removeClass('liked');
             
-            const button = $(this);
-            const postId = button.data('post-id');
-            const likeCount = button.closest('.card-footer').find('.like-count');
-            const likeIcon = button.find('.like-icon');
+            // Send AJAX request
+            $.ajax({
+                url: "{{ url_for('social.unlike_post_route', post_id=0) }}".replace('0', postId),
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': $('input[name="csrf_token"]').val()
+                },
+                success: function(response) {
+                    button.removeClass('processing');
+                },
+                error: function() {
+                    // Revert on error
+                    likeCount.text(parseInt(likeCount.text()) + 1);
+                    likeIcon.removeClass('far').addClass('fas');
+                    button.addClass('liked');
+                    button.removeClass('processing');
+                }
+            });
+        } else {
+            // Like action
+            likeCount.text(parseInt(likeCount.text()) + 1);
+            likeIcon.removeClass('far').addClass('fas');
+            button.addClass('liked');
             
-            // Prevent multiple clicks
-            if (button.hasClass('processing')) {
-                return;
-            }
-            
-            button.addClass('processing');
-            
-            // Visual feedback immediately
-            if (button.hasClass('liked')) {
-                // Unlike action
-                likeCount.text(parseInt(likeCount.text()) - 1);
-                likeIcon.removeClass('fas').addClass('far');
-                button.removeClass('liked');
-                
-                // Send AJAX request
-                $.ajax({
-                    url: "{{ url_for('social.unlike_post_route', post_id=0) }}".replace('0', postId),
-                    type: 'POST',
-                    headers: {
-                        'X-CSRFToken': $('input[name="csrf_token"]').val()
-                    },
-                    success: function(response) {
-                        button.removeClass('processing');
-                    },
-                    error: function() {
-                        // Revert on error
-                        likeCount.text(parseInt(likeCount.text()) + 1);
-                        likeIcon.removeClass('far').addClass('fas');
-                        button.addClass('liked');
-                        button.removeClass('processing');
-                    }
-                });
-            } else {
-                // Like action
-                likeCount.text(parseInt(likeCount.text()) + 1);
-                likeIcon.removeClass('far').addClass('fas');
-                button.addClass('liked');
-                
-                // Send AJAX request
-                $.ajax({
-                    url: "{{ url_for('social.like_post_route', post_id=0) }}".replace('0', postId),
-                    type: 'POST',
-                    headers: {
-                        'X-CSRFToken': $('input[name="csrf_token"]').val()
-                    },
-                    success: function(response) {
-                        button.removeClass('processing');
-                    },
-                    error: function() {
-                        // Revert on error
-                        likeCount.text(parseInt(likeCount.text()) - 1);
-                        likeIcon.removeClass('fas').addClass('far');
-                        button.removeClass('liked');
-                        button.removeClass('processing');
-                    }
-                });
-            }
-        });
+            // Send AJAX request
+            $.ajax({
+                url: "{{ url_for('social.like_post_route', post_id=0) }}".replace('0', postId),
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': $('input[name="csrf_token"]').val()
+                },
+                success: function(response) {
+                    button.removeClass('processing');
+                },
+                error: function() {
+                    // Revert on error
+                    likeCount.text(parseInt(likeCount.text()) - 1);
+                    likeIcon.removeClass('fas').addClass('far');
+                    button.removeClass('liked');
+                    button.removeClass('processing');
+                }
+            });
+        }
     }
     
-    // Initialize like buttons on page load
-    initializeLikeButtons();
-    
-    // Handle comment form submission with AJAX
-    $('.comment-form').submit(function(e) {
+    // Comment form handler
+    function handleCommentSubmit(e) {
         e.preventDefault();
         
         const form = $(this);
@@ -1250,10 +1991,10 @@ $(document).ready(function() {
                 commentInput.prop('disabled', false);
             }
         });
-    });
+    }
     
-    // Image modal functionality
-    $('.post-image img').click(function() {
+    // Image modal handler
+    function handleImageModal() {
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('fullscreenImage');
         const captionText = document.getElementById('imageCaption');
@@ -1261,27 +2002,16 @@ $(document).ready(function() {
         modal.classList.add('active');
         modalImg.src = this.src;
         captionText.innerHTML = this.alt || '';
-    });
+    }
     
-    $('.fullscreen-close').click(function() {
-        document.getElementById('imageModal').classList.remove('active');
-    });
-    
-    // Close modal when clicking outside the image
-    $('#imageModal').click(function(e) {
-        if (e.target === this) {
-            $(this).removeClass('active');
-        }
-    });
-    
-    // Likes popup functionality
-    $('.interaction-counter').click(function() {
+    // Interaction popup handler
+    function handleInteractionPopup() {
         const postId = $(this).data('post-id');
         const popup = $('#likesPopup');
         const likesList = $('#likesList');
         
         // Position the popup
-        const rect = this[0].getBoundingClientRect();
+        const rect = this.getBoundingClientRect();
         popup.css({
             top: rect.bottom + window.scrollY + 10,
             left: rect.left + window.scrollX
@@ -1326,7 +2056,33 @@ $(document).ready(function() {
         });
         
         return false; // Prevent event propagation
+    }
+    
+    // Initialize like buttons on page load
+    $('.like-button').on('click', handleLikeButton);
+    
+    // Handle comment form submission with AJAX
+    $('.comment-form').on('submit', handleCommentSubmit);
+    
+    // Image modal functionality
+    $('.post-image img').on('click', handleImageModal);
+    
+    $('.fullscreen-close').click(function() {
+        document.getElementById('imageModal').classList.remove('active');
     });
+    
+    // Close modal when clicking outside the image
+    $('#imageModal').click(function(e) {
+        if (e.target === this) {
+            $(this).removeClass('active');
+        }
+    });
+    
+    // Likes popup functionality
+    $('.interaction-counter').on('click', handleInteractionPopup);
+    
+    // Call initial page title update
+    updatePageTitle();
 });
 </script>
 {% endblock %}

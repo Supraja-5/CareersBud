@@ -1546,3 +1546,534 @@ html, body {
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
+
+
+
+
+
+/*...........*/
+
+
+/* Mobile Full-Screen Layout Fix for Base.html */
+
+/* Override app container and sidebar behavior on mobile */
+@media (max-width: 991.98px) {
+    /* Make app container full width */
+    .app-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Hide sidebar completely on mobile (it will show as overlay when toggled) */
+    .sidebar {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 280px !important;
+        height: 100vh !important;
+        z-index: 1050 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+    }
+    
+    /* Show sidebar when toggled */
+    .sidebar.show {
+        display: block !important;
+        transform: translateX(0) !important;
+    }
+    
+    /* Make main content take full width */
+    .main-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Adjust main header for full width */
+    .main-header {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 15px !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+    
+    /* Make content wrapper full width */
+    .content-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Ensure all containers inside content are full width */
+    .content-wrapper > .container,
+    .content-wrapper > .container-fluid {
+        max-width: 100% !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+    
+    /* Add overlay when sidebar is open */
+    .sidebar.show::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 280px;
+        width: calc(100vw - 280px);
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+}
+
+/* Extra small devices (phones) */
+@media (max-width: 575.98px) {
+    .main-header {
+        padding: 10px !important;
+    }
+    
+    .content-wrapper > .container,
+    .content-wrapper > .container-fluid {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    
+    /* Adjust welcome text for very small screens */
+    .welcome-text h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .welcome-text p {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Prevent horizontal scrolling */
+@media (max-width: 991.98px) {
+    body {
+        overflow-x: hidden !important;
+    }
+    
+    html {
+        overflow-x: hidden !important;
+    }
+}
+
+/* Fix for specific social feed layout */
+@media (max-width: 991.98px) {
+    /* Hide sidebar column completely in feed */
+    .feed-container .col-lg-4 {
+        display: none !important;
+    }
+    
+    /* Make feed column take full width */
+    .feed-container .col-lg-8 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding: 0 !important;
+    }
+    
+    /* Remove margins from feed container */
+    .feed-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .feed-container .row {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Adjust cards for edge-to-edge look */
+    .post-creator-card,
+    .post-card,
+    .card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+    }
+}
+
+/* Fix footer positioning on mobile */
+@media (max-width: 991.98px) {
+    .footer {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* Ensure mobile footer (if present) stays at bottom */
+.mobile-footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+}
+
+
+
+
+
+/*----toggle override-----*/
+
+
+/* Modern Theme Toggle Override */
+
+/* Override Bootstrap's tiny form-switch */
+.theme-toggle-icon .form-check {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+}
+
+.theme-toggle-icon .form-check-input {
+    width: 50px !important;
+    height: 26px !important;
+    background-color: var(--card-bg, #e9ecef) !important;
+    border: 2px solid var(--border-color, #dee2e6) !important;
+    border-radius: 26px !important;
+    background-image: none !important;
+    background-size: contain !important;
+    background-position: left center !important;
+    background-repeat: no-repeat !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    position: relative !important;
+    margin: 0 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Toggle switch thumb/handle */
+.theme-toggle-icon .form-check-input::before {
+    content: '🌙' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 3px !important;
+    transform: translateY(-50%) !important;
+    width: 18px !important;
+    height: 18px !important;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 10px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Checked state (light mode) */
+.theme-toggle-icon .form-check-input:checked {
+    background-color: #4ade80 !important;
+    border-color: #22c55e !important;
+    background-image: none !important;
+}
+
+.theme-toggle-icon .form-check-input:checked::before {
+    content: '☀️' !important;
+    left: 27px !important;
+    background: linear-gradient(145deg, #fbbf24, #f59e0b) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* Focus states */
+.theme-toggle-icon .form-check-input:focus {
+    border-color: var(--primary-color, #4ade80) !important;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25) !important;
+    outline: none !important;
+}
+
+/* Hover effects */
+.theme-toggle-icon .form-check-input:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Dark theme specific styling */
+[data-theme="dark"] .theme-toggle-icon .form-check-input {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+}
+
+[data-theme="dark"] .theme-toggle-icon .form-check-input::before {
+    background: linear-gradient(145deg, #1f2937, #374151) !important;
+    border-color: rgba(107, 114, 128, 0.3) !important;
+}
+
+[data-theme="dark"] .theme-toggle-icon .form-check-input:checked {
+    background-color: #4ade80 !important;
+    border-color: #22c55e !important;
+}
+
+[data-theme="dark"] .theme-toggle-icon .form-check-input:checked::before {
+    background: linear-gradient(145deg, #fbbf24, #f59e0b) !important;
+}
+
+/* MOBILE: Move theme toggle to sidebar */
+@media (max-width: 991.98px) {
+    /* Hide theme toggle from header on mobile */
+    .main-header .theme-toggle-icon {
+        display: none !important;
+    }
+    
+    /* Show theme toggle in sidebar on mobile */
+    .sidebar-theme-toggle {
+        display: block !important;
+        padding: 0.8rem 1.5rem !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .sidebar-theme-toggle .theme-label {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        color: var(--text-primary) !important;
+        font-size: 0.95rem !important;
+        margin: 0 !important;
+    }
+    
+    .sidebar-theme-toggle .form-check-input {
+        width: 44px !important;
+        height: 24px !important;
+        margin-left: 10px !important;
+    }
+    
+    .sidebar-theme-toggle .form-check-input::before {
+        width: 16px !important;
+        height: 16px !important;
+        font-size: 9px !important;
+        left: 2px !important;
+    }
+    
+    .sidebar-theme-toggle .form-check-input:checked::before {
+        left: 24px !important;
+    }
+}
+
+/* Desktop: Hide sidebar theme toggle */
+@media (min-width: 992px) {
+    .sidebar-theme-toggle {
+        display: none !important;
+    }
+}
+
+/* Animation for smooth transitions */
+@keyframes toggleSlide {
+    0% { transform: translateX(0) translateY(-50%); }
+    100% { transform: translateX(24px) translateY(-50%); }
+}
+
+.theme-toggle-icon .form-check-input:checked::before {
+    animation: toggleSlide 0.3s ease !important;
+}
+
+
+/*------notification modify override-----*/
+
+
+/* Modern Notification Icon Styling with Theme Colors */
+
+/* Override the notification icon with modern styling */
+.notification-icon {
+    position: relative !important;
+    cursor: pointer !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 44px !important;
+    height: 44px !important;
+    background: rgba(33, 136, 255, 0.1) !important; /* Primary blue with transparency */
+    border: 1px solid rgba(33, 136, 255, 0.2) !important;
+}
+
+.notification-icon:hover {
+    background: rgba(33, 136, 255, 0.15) !important;
+    border-color: rgba(33, 136, 255, 0.3) !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(33, 136, 255, 0.2) !important;
+}
+
+/* Modern bell icon styling with primary theme color */
+.notification-icon i.fas.fa-bell {
+    font-size: 1.1rem !important;
+    color: var(--primary-color, #2188ff) !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Alternative: Use a more modern outline bell */
+.notification-icon i.fas.fa-bell::before {
+    content: "\f0f3" !important; /* Bell outline */
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 400 !important; /* Regular weight for outline */
+}
+
+/* Modern badge styling with danger color */
+.notification-icon .badge {
+    position: absolute !important;
+    top: 6px !important;
+    right: 6px !important;
+    background: linear-gradient(135deg, var(--danger-color, #f85149), #cf222e) !important;
+    color: white !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 2px solid var(--card-bg, white) !important;
+    box-shadow: 0 2px 6px rgba(248, 81, 73, 0.4) !important;
+    animation: pulse-badge 2s infinite !important;
+    z-index: 2 !important;
+}
+
+/* Pulse animation for unread notifications */
+@keyframes pulse-badge {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+/* Modern active/pressed state */
+.notification-icon:active {
+    transform: scale(0.95) !important;
+    background: rgba(33, 136, 255, 0.2) !important;
+}
+
+/* Light theme specific styling */
+[data-theme="light"] .notification-icon {
+    background: rgba(9, 105, 218, 0.1) !important; /* Light theme primary */
+    border-color: rgba(9, 105, 218, 0.2) !important;
+}
+
+[data-theme="light"] .notification-icon:hover {
+    background: rgba(9, 105, 218, 0.15) !important;
+    border-color: rgba(9, 105, 218, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(9, 105, 218, 0.2) !important;
+}
+
+[data-theme="light"] .notification-icon i.fas.fa-bell {
+    color: var(--primary-color, #0969da) !important;
+}
+
+[data-theme="light"] .notification-icon:active {
+    background: rgba(9, 105, 218, 0.2) !important;
+}
+
+/* Dark theme specific styling */
+[data-theme="dark"] .notification-icon {
+    background: rgba(33, 136, 255, 0.15) !important; /* Dark theme primary */
+    border-color: rgba(33, 136, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .notification-icon:hover {
+    background: rgba(33, 136, 255, 0.25) !important;
+    border-color: rgba(33, 136, 255, 0.4) !important;
+    box-shadow: 0 4px 12px rgba(33, 136, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .notification-icon i.fas.fa-bell {
+    color: var(--primary-color, #2188ff) !important;
+}
+
+[data-theme="dark"] .notification-icon .badge {
+    border-color: var(--card-bg, #21262d) !important;
+}
+
+[data-theme="dark"] .notification-icon:active {
+    background: rgba(33, 136, 255, 0.3) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .notification-icon {
+        width: 40px !important;
+        height: 40px !important;
+        padding: 6px !important;
+    }
+    
+    .notification-icon i.fas.fa-bell {
+        font-size: 1rem !important;
+    }
+    
+    .notification-icon .badge {
+        top: 4px !important;
+        right: 4px !important;
+        min-width: 16px !important;
+        height: 16px !important;
+        font-size: 0.65rem !important;
+    }
+}
+
+/* Modern notification dropdown trigger styling */
+.notification-icon.dropdown-toggle::after {
+    display: none !important; /* Hide Bootstrap dropdown arrow */
+}
+
+/* Add subtle notification glow when there are unread notifications using theme colors */
+.notification-icon:has(.badge) {
+    box-shadow: 0 0 20px rgba(33, 136, 255, 0.3) !important;
+}
+
+[data-theme="light"] .notification-icon:has(.badge) {
+    box-shadow: 0 0 20px rgba(9, 105, 218, 0.3) !important;
+}
+
+[data-theme="dark"] .notification-icon:has(.badge) {
+    box-shadow: 0 0 20px rgba(33, 136, 255, 0.4) !important;
+}
+
+/* Alternative modern icons - uncomment one to use different style */
+
+/* Option 1: Modern outline bell with animation */
+/*
+.notification-icon i.fas.fa-bell::before {
+    content: "\f0a2" !important; 
+    animation: bell-ring 3s infinite ease-in-out !important;
+}
+
+@keyframes bell-ring {
+    0%, 50%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(10deg); }
+    20% { transform: rotate(-10deg); }
+    40% { transform: rotate(8deg); }
+}
+*/
+
+/* Option 2: Use modern notification/alert icon */
+/*
+.notification-icon i.fas.fa-bell::before {
+    content: "\f06a" !important;
+}
+*/
+
+/* Option 3: Use modern message/comment bubble */
+/*
+.notification-icon i.fas.fa-bell::before {
+    content: "\f4ad" !important;
+}
+*/

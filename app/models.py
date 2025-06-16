@@ -955,7 +955,7 @@ def update_subscription(user_id, subscription_tier, end_date=None):
     db.session.commit()
     return True
 
-def update_academic_progress(user_id, gpa, credits, current_courses):
+def update_academic_progress(user_id, gpa, credits):
     user = User.query.get(int(user_id))
     if not user:
         return False
@@ -963,9 +963,6 @@ def update_academic_progress(user_id, gpa, credits, current_courses):
     # Update GPA and credits
     user.gpa = gpa
     user.credits = credits
-    
-    # Update current courses (if needed)
-    user.current_courses = current_courses
     
     db.session.commit()
     return True

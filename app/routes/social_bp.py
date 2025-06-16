@@ -178,7 +178,7 @@ def new_conversation(user_id):
 def feed():
     form = PostForm()
     page = request.args.get('page', 1, type=int)
-    per_page = 5
+    per_page = 25
 
     if form.validate_on_submit():
         image_filename = None
