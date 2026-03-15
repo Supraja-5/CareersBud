@@ -10,7 +10,7 @@ progress_bp = Blueprint('progress', __name__)
 
 # Forms
 class AcademicProgressForm(FlaskForm):
-    gpa = FloatField('GPA', validators=[DataRequired(), NumberRange(min=0, max=4.0)])
+    gpa = FloatField('GPA', validators=[DataRequired(), NumberRange(min=0, max=10.0)])
     credits = IntegerField('Credits', validators=[DataRequired(), NumberRange(min=0)])
     submit = SubmitField('Update Progress')
 
