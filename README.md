@@ -158,3 +158,4 @@ Have feedback or ideas? Reach out on [LinkedIn](https://linkedin.com/in/arnabdut
 
 > CareerBud: Building Your Career, One Block at a Time. 🚀
 
+Project maintained by Supraja
